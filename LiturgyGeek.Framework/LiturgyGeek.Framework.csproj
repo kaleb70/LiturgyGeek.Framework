@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <VersionSuffix Condition="'$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true'">alpha.$([MSBuild]::Divide($([MSBuild]::Subtract($([System.DateTime]::UtcNow.Date.Ticks), $([System.DateTime]::Parse("2000/1/1").Ticks))), $([System.TimeSpan]::TicksPerDay))).$([MSBuild]::Divide($([System.DateTime]::UtcNow.TimeOfDay.Ticks), $([System.TimeSpan]::TicksPerSecond)))</VersionSuffix>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  </PropertyGroup>
+
+</Project>
