@@ -6,17 +6,36 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class MoveableDate : ChurchDate
+    public sealed class MoveableDate : ChurchDate
     {
         public int Week { get; private init; }
 
         public DayOfWeek DayOfWeek { get; private init; }
 
+        private readonly int hashCode;
+
         public MoveableDate(int week, DayOfWeek dayOfWeek)
         {
             Week = week;
             DayOfWeek = dayOfWeek;
+
+            unchecked
+            {
+                hashCode = 17;
+                hashCode = hashCode * 23 + Week.GetHashCode();
+                hashCode = hashCode * 23 + DayOfWeek.GetHashCode();
+            }
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is MoveableDate other
+                    && hashCode == other.hashCode
+                    && Week == other.Week
+                    && DayOfWeek == other.DayOfWeek;
+        }
+
+        public override int GetHashCode() => hashCode;
 
         public override string ToString() => Week.ToString("+0;-0;0") + '/' + DayOfWeek.ToString();
 

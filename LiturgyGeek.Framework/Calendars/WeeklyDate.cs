@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class WeeklyDate : ChurchDate
+    public sealed class WeeklyDate : ChurchDate
     {
         public DayOfWeek DayOfWeek { get; private init; }
 
@@ -14,6 +14,10 @@ namespace LiturgyGeek.Framework.Calendars
         {
             DayOfWeek = dayOfWeek;
         }
+
+        public override bool Equals(object? obj) => obj is WeeklyDate other && DayOfWeek == other.DayOfWeek;
+
+        public override int GetHashCode() => DayOfWeek.GetHashCode();
 
         public override string ToString() => DayOfWeek.ToString();
 

@@ -6,27 +6,23 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class MonthlyDate : ChurchDate
+    public sealed class MonthlyDate : ChurchDate
     {
         public int Day { get; private init; }
 
         public DayOfWeek? DayOfWeek { get; private init; }
 
-        public int? DaySpan { get; private init; }
+        private readonly int hashCode;
 
-        public MonthlyDate(int day) : this(day, default(DayOfWeek?), default(int?))
+        public MonthlyDate(int day) : this(day, default(DayOfWeek?))
         {
         }
 
-        public MonthlyDate(int day, DayOfWeek dayOfWeek) : this(day, (DayOfWeek?)dayOfWeek, default(int?))
+        public MonthlyDate(int day, DayOfWeek dayOfWeek) : this(day, (DayOfWeek?)dayOfWeek)
         {
         }
 
-        public MonthlyDate(int day, DayOfWeek dayOfWeek, int daySpan) : this(day, (DayOfWeek?)dayOfWeek, (int?)daySpan)
-        {
-        }
-
-        private MonthlyDate(int day, DayOfWeek? dayOfWeek, int? daySpan)
+        internal MonthlyDate(int day, DayOfWeek? dayOfWeek)
         {
             if (day < -31 || day > 31)
                 throw new ArgumentOutOfRangeException(nameof(day), "Must be a nonzero value between -31 and 31");
@@ -36,13 +32,26 @@ namespace LiturgyGeek.Framework.Calendars
             if (dayOfWeek.HasValue && !Enum.IsDefined(dayOfWeek.Value))
                 throw new ArgumentException("Invalid value", nameof(dayOfWeek));
 
-            if (daySpan < 1 || daySpan > 7)
-                throw new ArgumentOutOfRangeException(nameof(daySpan), "Must be between 1 and 7");
-
             Day = day;
             DayOfWeek = dayOfWeek;
-            DaySpan = daySpan;
+
+            unchecked
+            {
+                hashCode = 17;
+                hashCode = hashCode * 23 + Day.GetHashCode();
+                hashCode = hashCode * 23 + DayOfWeek.GetHashCode();
+            }
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is MonthlyDate other
+                    && hashCode == other.hashCode
+                    && Day == other.Day
+                    && DayOfWeek == other.DayOfWeek;
+        }
+
+        public override int GetHashCode() => hashCode;
 
         public override string ToString()
         {
@@ -53,11 +62,6 @@ namespace LiturgyGeek.Framework.Calendars
             {
                 result.Append('/');
                 result.Append(DayOfWeek.ToString());
-                if (DaySpan.HasValue)
-                {
-                    result.Append('/');
-                    result.Append(DaySpan);
-                }
             }
             return result.ToString();
         }
@@ -93,9 +97,7 @@ namespace LiturgyGeek.Framework.Calendars
             if (DayOfWeek.HasValue)
             {
                 var adjusted = result.First(DayOfWeek.Value);
-                if (DaySpan.HasValue && (adjusted - result).TotalDays >= DaySpan)
-                    return default;
-                result = adjusted;
+                result = adjusted.Month == result.Month ? adjusted : default;
             }
 
             return result.Year == year ? result : default;

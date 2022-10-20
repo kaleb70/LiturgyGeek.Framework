@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class FixedDate : ChurchDate
+    public sealed class FixedDate : ChurchDate
     {
-        private readonly bool[] _allowedDaysOfWeek = new bool[7];
-
         public class DayOfWeekFlags
         {
             private readonly FixedDate outer;
@@ -32,6 +30,10 @@ namespace LiturgyGeek.Framework.Calendars
 
         public int? Window { get; private init; }
 
+        private readonly bool[] _allowedDaysOfWeek = new bool[7];
+
+        private readonly int hashCode;
+
         public FixedDate(int month, int day) : this(month, day, default(DayOfWeek?), default, default)
         {
         }
@@ -47,8 +49,7 @@ namespace LiturgyGeek.Framework.Calendars
         public FixedDate(int month, int day, DayOfWeek dayOfWeek, int window) : this(month, day, (DayOfWeek?)dayOfWeek, default, window)
         {
         }
-
-        private FixedDate(int month, int day, DayOfWeek? startDayOfWeek, DayOfWeek? endDayOfWeek, int? window)
+        internal FixedDate(int month, int day, DayOfWeek? startDayOfWeek, DayOfWeek? endDayOfWeek, int? window)
         {
             AllowedDaysOfWeek = new DayOfWeekFlags(this);
 
@@ -121,7 +122,31 @@ namespace LiturgyGeek.Framework.Calendars
             {
                 Array.Fill(_allowedDaysOfWeek, true);
             }
+
+            unchecked
+            {
+                hashCode = 17;
+                hashCode = hashCode * 23 + Month.GetHashCode();
+                hashCode = hashCode * 23 + Day.GetHashCode();
+                hashCode = hashCode * 23 + AbsoluteDayOfWeek.GetHashCode();
+                hashCode = hashCode * 23 + Window.GetHashCode();
+                for (int i = 0; i < 7; i++)
+                    hashCode = hashCode * 23 + _allowedDaysOfWeek[i].GetHashCode();
+            }
         }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is FixedDate other
+                    && hashCode == other.hashCode
+                    && Month == other.Month
+                    && Day == other.Day
+                    && AbsoluteDayOfWeek == other.AbsoluteDayOfWeek
+                    && Window == other.Window
+                    && _allowedDaysOfWeek.SequenceEqual(other._allowedDaysOfWeek);
+        }
+
+        public override int GetHashCode() => hashCode;
 
         public override string ToString()
         {
