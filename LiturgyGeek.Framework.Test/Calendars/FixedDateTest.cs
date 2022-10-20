@@ -70,7 +70,7 @@ namespace LiturgyGeek.Framework.Test.Calendars
         }
 
         [TestMethod]
-        public void TestDayOfWeek()
+        public void TestAbsoluteDayOfWeek()
         {
             var fixedDate = new FixedDate(11, 1, DayOfWeek.Monday);
 
@@ -85,7 +85,7 @@ namespace LiturgyGeek.Framework.Test.Calendars
         }
 
         [TestMethod]
-        public void TestDaySpan()
+        public void TestWindow()
         {
             var fixedDate = new FixedDate(11, 1, DayOfWeek.Monday, 3);
 
@@ -95,6 +95,74 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreEqual(new DateTime(2025, 11, 3), Resolve(fixedDate, westernCalendar, 2025));
             Assert.AreEqual(new DateTime(2026, 11, 2), Resolve(fixedDate, westernCalendar, 2026));
             Assert.AreEqual(new DateTime(2027, 11, 1), Resolve(fixedDate, westernCalendar, 2027));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2028));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2029));
+        }
+
+        [TestMethod]
+        public void TestDayOfWeekRangeStart()
+        {
+            var fixedDate = new FixedDate(8, 15, DayOfWeek.Sunday, DayOfWeek.Tuesday);
+
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2020));
+            Assert.AreEqual(new DateTime(2021, 8, 15), Resolve(fixedDate, westernCalendar, 2021));
+            Assert.AreEqual(new DateTime(2022, 8, 15), Resolve(fixedDate, westernCalendar, 2022));
+            Assert.AreEqual(new DateTime(2023, 8, 15), Resolve(fixedDate, westernCalendar, 2023));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2024));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2025));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2026));
+            Assert.AreEqual(new DateTime(2027, 8, 15), Resolve(fixedDate, westernCalendar, 2027));
+            Assert.AreEqual(new DateTime(2028, 8, 15), Resolve(fixedDate, westernCalendar, 2028));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2029));
+        }
+
+        [TestMethod]
+        public void TestDayOfWeekRangeMiddle()
+        {
+            var fixedDate = new FixedDate(8, 15, DayOfWeek.Tuesday, DayOfWeek.Thursday);
+
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2020));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2021));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2022));
+            Assert.AreEqual(new DateTime(2023, 8, 15), Resolve(fixedDate, westernCalendar, 2023));
+            Assert.AreEqual(new DateTime(2024, 8, 15), Resolve(fixedDate, westernCalendar, 2024));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2025));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2026));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2027));
+            Assert.AreEqual(new DateTime(2028, 8, 15), Resolve(fixedDate, westernCalendar, 2028));
+            Assert.AreEqual(new DateTime(2029, 8, 15), Resolve(fixedDate, westernCalendar, 2029));
+        }
+
+        [TestMethod]
+        public void TestDayOfWeekRangeEnd()
+        {
+            var fixedDate = new FixedDate(8, 15, DayOfWeek.Thursday, DayOfWeek.Saturday);
+
+            Assert.AreEqual(new DateTime(2020, 8, 15), Resolve(fixedDate, westernCalendar, 2020));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2021));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2022));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2023));
+            Assert.AreEqual(new DateTime(2024, 8, 15), Resolve(fixedDate, westernCalendar, 2024));
+            Assert.AreEqual(new DateTime(2025, 8, 15), Resolve(fixedDate, westernCalendar, 2025));
+            Assert.AreEqual(new DateTime(2026, 8, 15), Resolve(fixedDate, westernCalendar, 2026));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2027));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2028));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2029));
+        }
+
+        [TestMethod]
+        public void TestDayOfWeekRangeWraparound()
+        {
+            var fixedDate = new FixedDate(8, 15, DayOfWeek.Saturday, DayOfWeek.Monday);
+
+            Assert.AreEqual(new DateTime(2020, 8, 15), Resolve(fixedDate, westernCalendar, 2020));
+            Assert.AreEqual(new DateTime(2021, 8, 15), Resolve(fixedDate, westernCalendar, 2021));
+            Assert.AreEqual(new DateTime(2022, 8, 15), Resolve(fixedDate, westernCalendar, 2022));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2023));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2024));
+            Assert.IsNull(Resolve(fixedDate, westernCalendar, 2025));
+            Assert.AreEqual(new DateTime(2026, 8, 15), Resolve(fixedDate, westernCalendar, 2026));
+            Assert.AreEqual(new DateTime(2027, 8, 15), Resolve(fixedDate, westernCalendar, 2027));
             Assert.IsNull(Resolve(fixedDate, westernCalendar, 2028));
             Assert.IsNull(Resolve(fixedDate, westernCalendar, 2029));
         }

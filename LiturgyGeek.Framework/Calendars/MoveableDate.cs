@@ -20,14 +20,6 @@ namespace LiturgyGeek.Framework.Calendars
 
         public override string ToString() => Week.ToString("+0;-0;0") + '/' + DayOfWeek.ToString();
 
-        public static new MoveableDate Parse(string text)
-        {
-            var split = text.Split('/');
-            if (split.Length != 2)
-                throw new FormatException();
-            return new MoveableDate(int.Parse(split[0]), Enum.Parse<DayOfWeek>(split[1]));
-        }
-
         public override bool IsRecurring => false;
 
         public override DateTime? Resolve(ChurchCalendar calendar, int year, DateTime? seed = default)

@@ -8,28 +8,50 @@ namespace LiturgyGeek.Framework.Calendars
 {
     public class FixedDate : ChurchDate
     {
+        private readonly bool[] _allowedDaysOfWeek = new bool[7];
+
+        public class DayOfWeekFlags
+        {
+            private readonly FixedDate outer;
+
+            internal DayOfWeekFlags(FixedDate outer)
+            {
+                this.outer = outer;
+            }
+
+            public bool this[DayOfWeek dayOfWeek] => outer._allowedDaysOfWeek[(int)dayOfWeek];
+        }
+
         public int Month { get; private init; }
 
         public int Day { get; private init; }
 
-        public DayOfWeek? DayOfWeek { get; private init; }
+        public DayOfWeekFlags AllowedDaysOfWeek { get; private init; }
 
-        public int? DaySpan { get; private init; }
+        public DayOfWeek? AbsoluteDayOfWeek { get; private init; }
 
-        public FixedDate(int month, int day) : this(month, day, default(DayOfWeek?), default(int?))
+        public int? Window { get; private init; }
+
+        public FixedDate(int month, int day) : this(month, day, default(DayOfWeek?), default, default)
         {
         }
 
-        public FixedDate(int month, int day, DayOfWeek dayOfWeek) : this(month, day, dayOfWeek, default(int?))
+        public FixedDate(int month, int day, DayOfWeek absoluteDayOfWeek) : this(month, day, absoluteDayOfWeek, default, default)
         {
         }
 
-        public FixedDate(int month, int day, DayOfWeek dayOfWeek, int daySpan) : this(month, day, (DayOfWeek?)dayOfWeek, (int?)daySpan)
+        public FixedDate(int month, int day, DayOfWeek startDayOfWeek, DayOfWeek endDayOfWeek) : this(month, day, startDayOfWeek, endDayOfWeek, default)
         {
         }
 
-        private FixedDate(int month, int day, DayOfWeek? dayOfWeek, int? daySpan)
+        public FixedDate(int month, int day, DayOfWeek dayOfWeek, int window) : this(month, day, (DayOfWeek?)dayOfWeek, default, window)
         {
+        }
+
+        private FixedDate(int month, int day, DayOfWeek? startDayOfWeek, DayOfWeek? endDayOfWeek, int? window)
+        {
+            AllowedDaysOfWeek = new DayOfWeekFlags(this);
+
             if (month < 1 || month > 12)
                 throw new ArgumentOutOfRangeException(nameof(month));
             switch (month)
@@ -58,16 +80,47 @@ namespace LiturgyGeek.Framework.Calendars
                     break;
             }
 
-            if (dayOfWeek.HasValue && !Enum.IsDefined(dayOfWeek.Value))
-                throw new ArgumentException("Invalid value", nameof(dayOfWeek));
+            if (startDayOfWeek.HasValue && !Enum.IsDefined(startDayOfWeek.Value))
+                throw new ArgumentException("Invalid value", nameof(startDayOfWeek));
 
-            if (daySpan < 1 || daySpan > 7)
-                throw new ArgumentOutOfRangeException(nameof(daySpan), "Must be between 1 and 7");
+            if (endDayOfWeek.HasValue && !startDayOfWeek.HasValue)
+                throw new NotSupportedException($"{nameof(endDayOfWeek)} is only valid if there is a {nameof(startDayOfWeek)}");
+
+            if (endDayOfWeek.HasValue && !Enum.IsDefined(endDayOfWeek.Value))
+                throw new ArgumentException("Invalid value", nameof(endDayOfWeek));
+
+            if (window.HasValue && (endDayOfWeek.HasValue || !startDayOfWeek.HasValue))
+                throw new NotSupportedException("A multi-day window can only be used with an absolute day of the week");
+
+            if (window < 1 || window > 7)
+                throw new ArgumentOutOfRangeException(nameof(window), "Must be between 1 and 7");
 
             Month = month;
             Day = day;
-            DayOfWeek = dayOfWeek;
-            DaySpan = daySpan;
+            Window = window;
+
+            if (startDayOfWeek.HasValue)
+            {
+                if (endDayOfWeek.HasValue)
+                {
+                    if (endDayOfWeek < startDayOfWeek)
+                    {
+                        Array.Fill(_allowedDaysOfWeek, true);
+                        Array.Fill(_allowedDaysOfWeek, false, (int)endDayOfWeek + 1, (int)startDayOfWeek - (int)endDayOfWeek - 1);
+                    }
+                    else
+                        Array.Fill(_allowedDaysOfWeek, true, (int)startDayOfWeek, (int)endDayOfWeek - (int)startDayOfWeek + 1);
+                }
+                else
+                {
+                    AbsoluteDayOfWeek = startDayOfWeek;
+                    _allowedDaysOfWeek[(int)startDayOfWeek] = true;
+                }
+            }
+            else
+            {
+                Array.Fill(_allowedDaysOfWeek, true);
+            }
         }
 
         public override string ToString()
@@ -76,29 +129,45 @@ namespace LiturgyGeek.Framework.Calendars
             result.Append(Month);
             result.Append('/');
             result.Append(Day);
-            if (DayOfWeek.HasValue)
+            if (AbsoluteDayOfWeek.HasValue)
             {
                 result.Append('/');
-                result.Append(DayOfWeek.ToString());
-                if (DaySpan.HasValue)
+                result.Append(AbsoluteDayOfWeek.ToString());
+                if (Window.HasValue)
                 {
                     result.Append('/');
-                    result.Append(DaySpan);
+                    result.Append(Window);
                 }
             }
+            else if (_allowedDaysOfWeek.Contains(false))
+            {
+                int start;
+                int end;
+                if (_allowedDaysOfWeek[0] && _allowedDaysOfWeek[6])
+                {
+                    int i = 0;
+                    while (_allowedDaysOfWeek[i])
+                        ++i;
+                    end = i - 1;
+                    while (!_allowedDaysOfWeek[i])
+                        ++i;
+                    start = i;
+                }
+                else
+                {
+                    int i = 0;
+                    while (!_allowedDaysOfWeek[i])
+                        ++i;
+                    start = i;
+                    while (i < 7 && _allowedDaysOfWeek[i])
+                        ++i;
+                    end = i - 1;
+                }
+                result.Append(((DayOfWeek)start).ToString());
+                result.Append('-');
+                result.Append(((DayOfWeek)end).ToString());
+            }
             return result.ToString();
-        }
-
-        public static new FixedDate Parse(string text)
-        {
-            var split = text.Split('/');
-            if (split.Length < 2 || split.Length > 4)
-                throw new FormatException();
-            var month = int.Parse(split[0]);
-            var day = int.Parse(split[1]);
-            var dayOfWeek = split.Length > 2 ? Enum.Parse<DayOfWeek>(split[2]) : default(DayOfWeek?);
-            var daySpan = split.Length > 3 ? int.Parse(split[3]) : default(int?);
-            return new FixedDate(month, day, dayOfWeek, daySpan);
         }
 
         public override bool IsRecurring => false;
@@ -106,14 +175,14 @@ namespace LiturgyGeek.Framework.Calendars
         public override DateTime? Resolve(ChurchCalendar calendar, int year, DateTime? seed = default)
         {
             if (seed.HasValue)
-                return null;
+                return default;
 
             DateTime result;
 
             if (Day == 29 && Month == 2 && !calendar.FixedCalendar.IsLeapYear(year))
             {
                 // 2/29 can only be resolved in leap years or if this is a day in a fixed week
-                if (!DayOfWeek.HasValue)
+                if (!AbsoluteDayOfWeek.HasValue)
                     return default;
 
                 // for the case of a day in a fixed week, the start of the week moves to 3/1
@@ -126,13 +195,17 @@ namespace LiturgyGeek.Framework.Calendars
                             : new DateTime(year, Month, Day, calendar.FixedCalendar);
             }
 
-            if (DayOfWeek.HasValue)
+            if (AbsoluteDayOfWeek.HasValue)
             {
-                var adjusted = result.First(DayOfWeek.Value);
-                if (DaySpan.HasValue && (adjusted - result).TotalDays >= DaySpan)
+                var adjusted = result.First(AbsoluteDayOfWeek.Value);
+                if (Window.HasValue && (adjusted - result).TotalDays >= Window)
                     return default;
-                return adjusted;
+                result = adjusted;
             }
+
+            if (!AllowedDaysOfWeek[result.DayOfWeek])
+                return default;
+
             return result;
         }
     }

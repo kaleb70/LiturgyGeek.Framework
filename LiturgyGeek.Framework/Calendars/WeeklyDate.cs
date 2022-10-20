@@ -17,8 +17,6 @@ namespace LiturgyGeek.Framework.Calendars
 
         public override string ToString() => DayOfWeek.ToString();
 
-        public static new WeeklyDate Parse(string text) => new WeeklyDate(Enum.Parse<DayOfWeek>(text));
-
         public override bool IsRecurring => true;
 
         public override DateTime? Resolve(ChurchCalendar calendar, int year, DateTime? seed = default)

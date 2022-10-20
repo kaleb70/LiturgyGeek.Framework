@@ -62,17 +62,6 @@ namespace LiturgyGeek.Framework.Calendars
             return result.ToString();
         }
 
-        public static new MonthlyDate Parse(string text)
-        {
-            var split = text.Split('/');
-            if (split.Length < 2 || split.Length > 4 || split[0].Trim() != "*")
-                throw new FormatException();
-            var day = int.Parse(split[1]);
-            var dayOfWeek = split.Length > 2 ? Enum.Parse<DayOfWeek>(split[2]) : default(DayOfWeek?);
-            var daySpan = split.Length > 3 ? int.Parse(split[3]) : default(int?);
-            return new MonthlyDate(day, dayOfWeek, daySpan);
-        }
-
         public override bool IsRecurring => false;
 
         public override DateTime? Resolve(ChurchCalendar calendar, int year, DateTime? seed = default)
