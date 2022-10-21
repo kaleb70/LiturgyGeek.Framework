@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Helpers
+namespace LiturgyGeek.Framework.Core
 {
     internal static class GeneralParser
     {

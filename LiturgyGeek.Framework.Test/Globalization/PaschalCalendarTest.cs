@@ -1,11 +1,11 @@
-﻿using LiturgyGeek.Framework.Calendars;
+﻿using LiturgyGeek.Framework.Globalization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Test.Calendars
+namespace LiturgyGeek.Framework.Test.Globalization
 {
     [TestClass]
     public class PaschalCalendarTest

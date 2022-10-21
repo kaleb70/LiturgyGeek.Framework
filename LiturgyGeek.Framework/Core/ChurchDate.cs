@@ -1,12 +1,12 @@
-﻿using System;
+﻿using LiturgyGeek.Framework.Globalization;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LiturgyGeek.Framework.Helpers;
 
-namespace LiturgyGeek.Framework.Calendars
+namespace LiturgyGeek.Framework.Core
 {
     public abstract class ChurchDate
     {

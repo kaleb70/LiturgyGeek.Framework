@@ -1,11 +1,12 @@
-﻿using System;
+﻿using LiturgyGeek.Framework.Core;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Calendars
+namespace LiturgyGeek.Framework.Globalization
 {
     public class ChurchCalendar
     {

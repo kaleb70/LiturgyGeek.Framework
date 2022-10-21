@@ -1,10 +1,11 @@
-﻿using System;
+﻿using LiturgyGeek.Framework.Globalization;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Calendars
+namespace LiturgyGeek.Framework.Core
 {
     public sealed class FixedDate : ChurchDate
     {
@@ -34,7 +35,7 @@ namespace LiturgyGeek.Framework.Calendars
 
         private readonly int hashCode;
 
-        public FixedDate(int month, int day) : this(month, day, default(DayOfWeek?), default, default)
+        public FixedDate(int month, int day) : this(month, day, default, default, default)
         {
         }
 
@@ -215,7 +216,7 @@ namespace LiturgyGeek.Framework.Calendars
             }
             else
             {
-                result = (Day == -1 && Month == 3)
+                result = Day == -1 && Month == 3
                             ? new DateTime(year, 3, 1, calendar.FixedCalendar).AddDays(-1)
                             : new DateTime(year, Month, Day, calendar.FixedCalendar);
             }

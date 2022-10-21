@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Calendars
+namespace LiturgyGeek.Framework.Globalization
 {
     public abstract class PaschalCalendar
     {

@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Calendars
+namespace LiturgyGeek.Framework.Core
 {
-    public static class DateTimeExtensions
+    internal static class DateTimeExtensions
     {
         public static DateTime First(this DateTime dateTime, DayOfWeek dayOfWeek)
         {
