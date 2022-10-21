@@ -42,12 +42,12 @@ namespace LiturgyGeek.Framework.Core
 
         public override bool IsRecurring => false;
 
-        public override DateTime? Resolve(ChurchCalendar calendar, int year, DateTime? seed = default)
+        public override DateTime? Resolve(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
         {
             if (seed.HasValue)
                 return null;
 
-            var pascha = calendar.MoveableCalendar.FindPascha(year);
+            var pascha = calendarSystem.MoveableCalendar.FindPascha(year);
             int week = Week > 0 ? Week - 1 : Week;
             return pascha.AddDays(week * 7 + (int)DayOfWeek);
         }

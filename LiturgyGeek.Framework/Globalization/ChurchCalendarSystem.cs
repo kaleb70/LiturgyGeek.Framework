@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Globalization
 {
-    public class ChurchCalendar
+    public class ChurchCalendarSystem
     {
         public Calendar FixedCalendar { get; private init; }
 
         public PaschalCalendar MoveableCalendar { get; private init; }
 
-        public ChurchCalendar(Calendar fixedCalendar, PaschalCalendar moveableCalendar)
+        public ChurchCalendarSystem(Calendar fixedCalendar, PaschalCalendar moveableCalendar)
         {
             FixedCalendar = fixedCalendar;
             MoveableCalendar = moveableCalendar;

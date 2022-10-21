@@ -12,9 +12,9 @@ namespace LiturgyGeek.Framework.Test.Core
     [TestClass]
     public class FixedDateTest
     {
-        private static readonly ChurchCalendar westernCalendar = new ChurchCalendar(new GregorianCalendar(), new GregorianPaschalCalendar());
-        private static readonly ChurchCalendar easternNewCalendar = new ChurchCalendar(new RevisedJulianCalendar(), new JulianPaschalCalendar());
-        private static readonly ChurchCalendar easternOldCalendar = new ChurchCalendar(new JulianCalendar(), new JulianPaschalCalendar());
+        private static readonly ChurchCalendarSystem westernCalendar = new ChurchCalendarSystem(new GregorianCalendar(), new GregorianPaschalCalendar());
+        private static readonly ChurchCalendarSystem easternNewCalendar = new ChurchCalendarSystem(new RevisedJulianCalendar(), new JulianPaschalCalendar());
+        private static readonly ChurchCalendarSystem easternOldCalendar = new ChurchCalendarSystem(new JulianCalendar(), new JulianPaschalCalendar());
 
         [TestMethod]
         public void TestSimpleCase()
@@ -168,11 +168,11 @@ namespace LiturgyGeek.Framework.Test.Core
             Assert.IsNull(Resolve(fixedDate, westernCalendar, 2029));
         }
 
-        private DateTime? Resolve(FixedDate fixedDate, ChurchCalendar churchCalendar, int year)
+        private DateTime? Resolve(FixedDate fixedDate, ChurchCalendarSystem calendarSystem, int year)
         {
-            var result = fixedDate.Resolve(churchCalendar, year);
+            var result = fixedDate.Resolve(calendarSystem, year);
             if (result.HasValue)
-                Assert.IsNull(fixedDate.Resolve(churchCalendar, year, result));
+                Assert.IsNull(fixedDate.Resolve(calendarSystem, year, result));
             return result;
         }
     }

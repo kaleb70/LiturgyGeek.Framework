@@ -198,27 +198,27 @@ namespace LiturgyGeek.Framework.Core
 
         public override bool IsRecurring => false;
 
-        public override DateTime? Resolve(ChurchCalendar calendar, int year, DateTime? seed = default)
+        public override DateTime? Resolve(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
         {
             if (seed.HasValue)
                 return default;
 
             DateTime result;
 
-            if (Day == 29 && Month == 2 && !calendar.FixedCalendar.IsLeapYear(year))
+            if (Day == 29 && Month == 2 && !calendarSystem.FixedCalendar.IsLeapYear(year))
             {
                 // 2/29 can only be resolved in leap years or if this is a day in a fixed week
                 if (!AbsoluteDayOfWeek.HasValue)
                     return default;
 
                 // for the case of a day in a fixed week, the start of the week moves to 3/1
-                result = new DateTime(year, 3, 1, calendar.FixedCalendar);
+                result = new DateTime(year, 3, 1, calendarSystem.FixedCalendar);
             }
             else
             {
                 result = Day == -1 && Month == 3
-                            ? new DateTime(year, 3, 1, calendar.FixedCalendar).AddDays(-1)
-                            : new DateTime(year, Month, Day, calendar.FixedCalendar);
+                            ? new DateTime(year, 3, 1, calendarSystem.FixedCalendar).AddDays(-1)
+                            : new DateTime(year, Month, Day, calendarSystem.FixedCalendar);
             }
 
             if (AbsoluteDayOfWeek.HasValue)

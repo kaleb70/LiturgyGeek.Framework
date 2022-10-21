@@ -24,10 +24,10 @@ namespace LiturgyGeek.Framework.Core
 
         public override bool IsRecurring => true;
 
-        public override DateTime? Resolve(ChurchCalendar calendar, int year, DateTime? seed = default)
+        public override DateTime? Resolve(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
         {
             if (!seed.HasValue)
-                return new DateTime(year, 1, 1, calendar.FixedCalendar).First(DayOfWeek);
+                return new DateTime(year, 1, 1, calendarSystem.FixedCalendar).First(DayOfWeek);
 
             var result = seed.Value.AddDays(7);
             return result.Year == year ? result : default;

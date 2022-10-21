@@ -69,7 +69,7 @@ namespace LiturgyGeek.Framework.Core
 
         public override bool IsRecurring => false;
 
-        public override DateTime? Resolve(ChurchCalendar calendar, int year, DateTime? seed = default)
+        public override DateTime? Resolve(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
         {
             DateTime result;
             if (Day < 0)

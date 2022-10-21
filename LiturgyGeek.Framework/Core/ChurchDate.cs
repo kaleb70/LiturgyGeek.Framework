@@ -87,6 +87,6 @@ namespace LiturgyGeek.Framework.Core
 
         public abstract bool IsRecurring { get; }
 
-        public abstract DateTime? Resolve(ChurchCalendar calendar, int year, DateTime? seed = default);
+        public abstract DateTime? Resolve(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default);
     }
 }
