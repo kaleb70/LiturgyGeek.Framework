@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Test.Core
@@ -40,6 +41,33 @@ namespace LiturgyGeek.Framework.Test.Core
         {
             Assert.AreEqual(new MonthlyDate(10), ChurchDate.Parse("*/10"));
             Assert.AreEqual(new MonthlyDate(10, DayOfWeek.Sunday), ChurchDate.Parse("*/10/Sunday"));
+        }
+
+        [TestMethod]
+        public void TestSerialization()
+        {
+            var original = new DateContainer(new MoveableDate(-1, DayOfWeek.Sunday));
+            var text = JsonSerializer.Serialize(original);
+            var result = JsonSerializer.Deserialize<DateContainer>(text);
+
+            Assert.AreEqual("{\"Date\":\"-1/Sunday\"}", text);
+            Assert.AreEqual(original, result);
+        }
+
+        public class DateContainer
+        {
+            public ChurchDate Date { get; set; }
+
+            public DateContainer(ChurchDate date)
+            {
+                Date = date;
+            }
+
+            public override string ToString() => Date.ToString();
+
+            public override bool Equals(object? obj) => obj is DateContainer other && Date.Equals(other.Date);
+
+            public override int GetHashCode() => Date.GetHashCode();
         }
     }
 }

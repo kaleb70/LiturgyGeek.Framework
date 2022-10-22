@@ -1,6 +1,7 @@
 ﻿using LiturgyGeek.Framework.Globalization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -54,20 +55,20 @@ namespace LiturgyGeek.Framework.Core
 
         public override int GetHashCode() => hashCode;
 
-        public override string ToString()
+        public override string ToString(CultureInfo cultureInfo)
         {
             var result = new StringBuilder();
             result.Append("*/");
-            result.Append(Day);
+            result.Append(Day.ToString(cultureInfo));
             if (DayOfWeek.HasValue)
             {
                 result.Append('/');
-                result.Append(DayOfWeek.ToString());
+                result.Append(cultureInfo.DateTimeFormat.DayNames[(int)DayOfWeek]);
             }
             return result.ToString();
         }
 
-        public override bool IsRecurring => false;
+        public override bool IsRecurring => true;
 
         public override DateTime? Resolve(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
         {

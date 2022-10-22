@@ -1,6 +1,7 @@
 ﻿using LiturgyGeek.Framework.Globalization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,7 +39,8 @@ namespace LiturgyGeek.Framework.Core
 
         public override int GetHashCode() => hashCode;
 
-        public override string ToString() => Week.ToString("+0;-0;0") + '/' + DayOfWeek.ToString();
+        public override string ToString(CultureInfo cultureInfo)
+            => Week.ToString(cultureInfo) + '/' + cultureInfo.DateTimeFormat.DayNames[(int)DayOfWeek];
 
         public override bool IsRecurring => false;
 

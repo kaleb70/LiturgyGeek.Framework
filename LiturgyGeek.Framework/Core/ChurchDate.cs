@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Core
 {
+    [JsonConverter(typeof(ChurchDateJsonConverter))]
     public abstract class ChurchDate
     {
         private static readonly char[] slashSeparator = new[] { '/' };
@@ -84,6 +86,10 @@ namespace LiturgyGeek.Framework.Core
                     return new MoveableDate(leftValue, GeneralParser.ParseDayOfWeek(parsed[0], cultureInfo));
             }
         }
+
+        public sealed override string ToString() => ToString(CultureInfo.InvariantCulture);
+
+        public abstract string ToString(CultureInfo culture);
 
         public abstract bool IsRecurring { get; }
 

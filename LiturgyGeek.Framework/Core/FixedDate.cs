@@ -1,6 +1,7 @@
 ﻿using LiturgyGeek.Framework.Globalization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -149,20 +150,20 @@ namespace LiturgyGeek.Framework.Core
 
         public override int GetHashCode() => hashCode;
 
-        public override string ToString()
+        public override string ToString(CultureInfo cultureInfo)
         {
             var result = new StringBuilder();
-            result.Append(Month);
+            result.Append(Month.ToString(cultureInfo));
             result.Append('/');
-            result.Append(Day);
+            result.Append(Day.ToString(cultureInfo));
             if (AbsoluteDayOfWeek.HasValue)
             {
                 result.Append('/');
-                result.Append(AbsoluteDayOfWeek.ToString());
+                result.Append(cultureInfo.DateTimeFormat.DayNames[(int)AbsoluteDayOfWeek]);
                 if (Window.HasValue)
                 {
                     result.Append('/');
-                    result.Append(Window);
+                    result.Append(Window.Value.ToString(cultureInfo));
                 }
             }
             else if (_allowedDaysOfWeek.Contains(false))
@@ -189,9 +190,9 @@ namespace LiturgyGeek.Framework.Core
                         ++i;
                     end = i - 1;
                 }
-                result.Append(((DayOfWeek)start).ToString());
+                result.Append(cultureInfo.DateTimeFormat.DayNames[start]);
                 result.Append('-');
-                result.Append(((DayOfWeek)end).ToString());
+                result.Append(cultureInfo.DateTimeFormat.DayNames[end]);
             }
             return result.ToString();
         }

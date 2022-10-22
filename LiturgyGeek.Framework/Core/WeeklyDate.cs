@@ -1,6 +1,7 @@
 ﻿using LiturgyGeek.Framework.Globalization;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,7 +21,7 @@ namespace LiturgyGeek.Framework.Core
 
         public override int GetHashCode() => DayOfWeek.GetHashCode();
 
-        public override string ToString() => DayOfWeek.ToString();
+        public override string ToString(CultureInfo cultureInfo) => cultureInfo.DateTimeFormat.DayNames[(int)DayOfWeek];
 
         public override bool IsRecurring => true;
 
