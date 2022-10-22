@@ -2,7 +2,9 @@
 
   <PropertyGroup>
     <VersionPrefix>0.1.0</VersionPrefix>
-    <VersionSuffix Condition="'$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true'">alpha.$([MSBuild]::Divide($([MSBuild]::Subtract($([System.DateTime]::UtcNow.Date.Ticks), $([System.DateTime]::Parse("2000/1/1").Ticks))), $([System.TimeSpan]::TicksPerDay))).$([MSBuild]::Divide($([System.DateTime]::UtcNow.TimeOfDay.Ticks), $([System.TimeSpan]::TicksPerSecond)))</VersionSuffix>
+	<BuildNumber>$([MSBuild]::Divide($([MSBuild]::Subtract($([System.DateTime]::UtcNow.Date.Ticks), $([System.DateTime]::Parse("2000/1/1").Ticks))), $([System.TimeSpan]::TicksPerDay)))</BuildNumber>
+	<RevisionNumber>$([MSBuild]::Divide($([MSBuild]::Divide($([System.DateTime]::UtcNow.TimeOfDay.Ticks), $([System.TimeSpan]::TicksPerSecond))), $([System.Convert]::ToUInt16(2))))</RevisionNumber>
+    <VersionSuffix Condition="'$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true'">alpha.$(BuildNumber).$(RevisionNumber)</VersionSuffix>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
