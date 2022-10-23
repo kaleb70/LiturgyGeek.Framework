@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Core
 {
-    internal static class DateTimeExtensions
+    public static class DateTimeExtensions
     {
         public static DateTime First(this DateTime dateTime, DayOfWeek dayOfWeek)
         {

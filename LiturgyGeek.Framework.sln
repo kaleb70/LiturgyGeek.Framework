@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LiturgyGeek.Framework.TestApp", "LiturgyGeek.Framework.TestApp\LiturgyGeek.Framework.TestApp.csproj", "{A407EACC-3886-49FE-A08C-580CA5F1A17C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{5E049BCA-6FCB-4F9E-B375-7708DF72D15A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E049BCA-6FCB-4F9E-B375-7708DF72D15A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E049BCA-6FCB-4F9E-B375-7708DF72D15A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A407EACC-3886-49FE-A08C-580CA5F1A17C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A407EACC-3886-49FE-A08C-580CA5F1A17C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A407EACC-3886-49FE-A08C-580CA5F1A17C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A407EACC-3886-49FE-A08C-580CA5F1A17C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

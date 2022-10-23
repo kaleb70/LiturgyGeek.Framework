@@ -14,6 +14,14 @@ namespace LiturgyGeek.Framework.Core
     {
         private static readonly char[] slashSeparator = new[] { '/' };
         private static readonly char[] hyphenSeparator = new[] { '-' };
+        private static readonly char[] semicolonSeparator = new[] { ';' };
+
+        public static implicit operator ChurchDate(string text) => Parse(text);
+
+        public static ChurchDate[] ParseCollection(string text) => ParseCollection(text, CultureInfo.InvariantCulture);
+
+        public static ChurchDate[] ParseCollection(string text, CultureInfo cultureInfo)
+            => text.Split(semicolonSeparator).Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => Parse(t, cultureInfo)).ToArray();
 
         public static ChurchDate Parse(string text) => Parse(text, CultureInfo.InvariantCulture);
 

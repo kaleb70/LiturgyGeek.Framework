@@ -20,7 +20,7 @@ namespace LiturgyGeek.Framework.Globalization
             MoveableCalendar = moveableCalendar;
         }
 
-        public IEnumerable<(TKey Key, DateTime Date)> ResolveAll<TKey>(DateTime startDate, DateTime endDate, IEnumerable<(TKey Key, ChurchDate ChurchDate)> churchEvents)
+        public IEnumerable<(TEvent Event, DateTime Date)> ResolveAll<TEvent>(DateTime startDate, DateTime endDate, IEnumerable<(TEvent Event, ChurchDate Date)> churchEvents)
         {
             startDate = startDate.Date;
             endDate = endDate.Date;
@@ -35,9 +35,9 @@ namespace LiturgyGeek.Framework.Globalization
                     DateTime? resolvedDate = default;
                     do
                     {
-                        resolvedDate = churchEvent.ChurchDate.Resolve(this, year, resolvedDate);
+                        resolvedDate = churchEvent.Date.Resolve(this, year, resolvedDate);
                         if (resolvedDate >= startDate && resolvedDate < endDate)
-                            yield return (Key: churchEvent.Key, Date: resolvedDate.Value);
+                            yield return (Event: churchEvent.Event, Date: resolvedDate.Value);
 
                     } while (resolvedDate.HasValue);
                 }

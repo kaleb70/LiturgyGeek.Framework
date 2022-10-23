@@ -12,6 +12,12 @@ namespace LiturgyGeek.Framework.Calendars
 
         public ChurchEvent[] Events { get; set; }
 
+        public ChurchCalendar()
+        {
+            Seasons = new ChurchSeason[0];
+            Events = new ChurchEvent[0];
+        }
+
         public ChurchCalendar(ChurchSeason[] seasons, ChurchEvent[] events)
         {
             Seasons = seasons;

@@ -10,26 +10,29 @@ namespace LiturgyGeek.Framework.Calendars
 {
     public class ChurchSeason
     {
-        public string OccasionCode { get; set; }
+        public string? OccasionCode { get; set; }
 
         public ChurchDate StartDate { get; set; }
 
         public ChurchDate EndDate { get; set; }
 
+        public bool IsDefault { get; set; }
+
         public ChurchEvent[] Events { get; set; }
 
-        public string? Name { get; set; }
-
-        public string? ShortName { get; set; }
-
-        public ChurchSeason(string occasionCode, ChurchDate startDate, ChurchDate endDate, ChurchEvent[] events, string? name = default, string? shortName = default)
+        [JsonConstructor]
+        public ChurchSeason(string? occasionCode, ChurchDate startDate, ChurchDate endDate, bool isDefault = false, ChurchEvent[]? events = default)
         {
             OccasionCode = occasionCode;
             StartDate = startDate;
             EndDate = endDate;
-            Events = events;
-            Name = name;
-            ShortName = shortName;
+            IsDefault = isDefault;
+            Events = events ?? new ChurchEvent[0];
+        }
+
+        public ChurchSeason(ChurchDate startDate, ChurchDate endDate, bool isDefault = false, ChurchEvent[]? events = default)
+            : this(default, startDate, endDate, isDefault, events)
+        {
         }
     }
 }
