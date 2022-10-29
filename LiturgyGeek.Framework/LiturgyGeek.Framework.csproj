@@ -4,16 +4,24 @@
     <VersionPrefix>0.1.0</VersionPrefix>
 	<BuildNumber>$([MSBuild]::Divide($([MSBuild]::Subtract($([System.DateTime]::UtcNow.Date.Ticks), $([System.DateTime]::Parse("2000/1/1").Ticks))), $([System.TimeSpan]::TicksPerDay)))</BuildNumber>
 	<RevisionNumber>$([MSBuild]::Divide($([MSBuild]::Divide($([System.DateTime]::UtcNow.TimeOfDay.Ticks), $([System.TimeSpan]::TicksPerSecond))), $([System.Convert]::ToUInt16(2))))</RevisionNumber>
-    <VersionSuffix Condition="'$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true'">alpha.$(BuildNumber).$(RevisionNumber)</VersionSuffix>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <VersionSuffix Condition="'$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true'">alpha.$(BuildNumber).$(RevisionNumber)</VersionSuffix>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Beta|AnyCPU'">
+    <VersionSuffix Condition="'$(DesignTimeBuild)' != 'true' OR '$(BuildingProject)' == 'true'">beta.$(BuildNumber).$(RevisionNumber)</VersionSuffix>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
   </PropertyGroup>
+
+  <Target Name="LocalPackage" AfterTargets="Pack" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Exec Command="nuget add $(PackageOutputPath)$(PackageId).$(Version).nupkg -Source n:\" />
+  </Target>
 
 </Project>
