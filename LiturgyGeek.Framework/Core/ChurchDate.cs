@@ -18,10 +18,10 @@ namespace LiturgyGeek.Framework.Core
 
         public static implicit operator ChurchDate(string text) => Parse(text);
 
-        public static ChurchDate[] ParseCollection(string text) => ParseCollection(text, CultureInfo.InvariantCulture);
+        public static IEnumerable<ChurchDate> ParseCollection(string text) => ParseCollection(text, CultureInfo.InvariantCulture);
 
-        public static ChurchDate[] ParseCollection(string text, CultureInfo cultureInfo)
-            => text.Split(semicolonSeparator).Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => Parse(t, cultureInfo)).ToArray();
+        public static IEnumerable<ChurchDate> ParseCollection(string text, CultureInfo cultureInfo)
+            => text.Split(semicolonSeparator).Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => Parse(t, cultureInfo));
 
         public static ChurchDate Parse(string text) => Parse(text, CultureInfo.InvariantCulture);
 

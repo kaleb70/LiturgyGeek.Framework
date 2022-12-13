@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchSeason
+    public class ChurchSeason : ICloneable<ChurchSeason>
     {
         public string? OccasionCode { get; set; }
 
@@ -18,21 +18,32 @@ namespace LiturgyGeek.Framework.Calendars
 
         public bool IsDefault { get; set; }
 
-        public ChurchEvent[] Events { get; set; }
+        //public List<ChurchEvent> Events { get; set; }
 
         [JsonConstructor]
-        public ChurchSeason(string? occasionCode, ChurchDate startDate, ChurchDate endDate, bool isDefault = false, ChurchEvent[]? events = default)
+        public ChurchSeason(string? occasionCode, ChurchDate startDate, ChurchDate endDate, bool isDefault = false, IEnumerable<ChurchEvent>? events = default)
         {
             OccasionCode = occasionCode;
             StartDate = startDate;
             EndDate = endDate;
             IsDefault = isDefault;
-            Events = events ?? new ChurchEvent[0];
         }
 
-        public ChurchSeason(ChurchDate startDate, ChurchDate endDate, bool isDefault = false, ChurchEvent[]? events = default)
+        public ChurchSeason(ChurchDate startDate, ChurchDate endDate, bool isDefault = false, IEnumerable<ChurchEvent>? events = default)
             : this(default, startDate, endDate, isDefault, events)
         {
         }
+
+        public ChurchSeason(ChurchSeason other)
+        {
+            OccasionCode = other.OccasionCode;
+            StartDate = other.StartDate;
+            EndDate = other.EndDate;
+            IsDefault = other.IsDefault;
+        }
+
+        public ChurchSeason Clone() => new ChurchSeason(this);
+
+        object ICloneable.Clone() => Clone();
     }
 }

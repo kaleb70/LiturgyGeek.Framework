@@ -24,9 +24,9 @@ namespace LiturgyGeek.Framework.TestApp
             }
         }
 
-        private static ChurchCalendar OcaCalendar = new ChurchCalendar
+        private static ChurchCalendar OcaCalendar = new ChurchCalendar("OCA", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
         {
-            Seasons = new[]
+            Seasons = new List<ChurchSeason>
             {
                 new ChurchSeason("ordinary", "1/1", "12/31", isDefault: true),
                 new ChurchSeason("publican.pharisee", "-10/Sunday", "-10/Saturday"),
@@ -41,7 +41,7 @@ namespace LiturgyGeek.Framework.TestApp
                 new ChurchSeason("nativity.forefeast", "12/20", "12/24"),
                 new ChurchSeason("nativity.afterfeast", "12/26", "1/4"),
             },
-            Events = new[]
+            Events = new List<ChurchEvent>
             {
                 ChurchEvent.ByName("-11/Sunday", "Zacchaeus Sunday"),
                 ChurchEvent.ByName("-10/Sunday", "Publican and Pharisee"),
