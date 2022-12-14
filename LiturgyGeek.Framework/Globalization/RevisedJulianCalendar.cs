@@ -30,7 +30,7 @@ namespace LiturgyGeek.Framework.Globalization
         /// Gets the earliest date and time supported by the <see cref="RevisedJulianCalendar"/> type.
         /// </summary>
         /// <returns>
-        /// The earlist date and time supported by the <see cref="RevisedJulianCalendar"/> type,
+        /// The earliest date and time supported by the <see cref="RevisedJulianCalendar"/> type,
         /// which is the first moment of March 1, A.D. 1600, the first day of the
         /// current convergence of the Gregorian and Revised Julian calendars.
         /// </returns>
