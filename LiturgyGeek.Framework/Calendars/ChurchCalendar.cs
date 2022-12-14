@@ -15,6 +15,8 @@ namespace LiturgyGeek.Framework.Calendars
 
         public CalendarReckoning PaschalReckoning { get; set; }
 
+        public List<ChurchEventRank> EventRanks { get; set; } = new List<ChurchEventRank>();
+
         public List<ChurchSeason> Seasons { get; set; } = new List<ChurchSeason>();
 
         public List<ChurchEvent> Events { get; set; } = new List<ChurchEvent>();
@@ -40,6 +42,7 @@ namespace LiturgyGeek.Framework.Calendars
             Name = other.Name;
             SolarReckoning = other.SolarReckoning;
             PaschalReckoning = other.PaschalReckoning;
+            EventRanks = other.EventRanks.Clone();
             Seasons = other.Seasons.Clone();
             Events = other.Events.Clone();
         }
