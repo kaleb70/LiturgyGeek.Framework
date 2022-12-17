@@ -26,12 +26,12 @@
   },
   "events": [
     {
-      "occasionCode": "pascha",
+      "occasionKey": "pascha",
       "dates": [ "1/Sunday" ],
       "eventRankKey": "great.feast"
     },
     {
-      "occasionCode": "holy.cross",
+      "occasionKey": "holy.cross",
       "dates": [ "9/14" ],
       "eventRankKey": "great.feast"
     }

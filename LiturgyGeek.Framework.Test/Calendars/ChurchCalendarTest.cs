@@ -61,9 +61,9 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreEqual(isDefault, season.IsDefault);
         }
 
-        private void VerifyEvent(ChurchEvent churchEvent, string occasionCode, ChurchDate[] dates, string? name, string? longName, string? eventRankKey)
+        private void VerifyEvent(ChurchEvent churchEvent, string occasionKey, ChurchDate[] dates, string? name, string? longName, string? eventRankKey)
         {
-            Assert.AreEqual(occasionCode, churchEvent.OccasionCode);
+            Assert.AreEqual(occasionKey, churchEvent.OccasionKey);
             CollectionAssert.AreEqual(dates, churchEvent.Dates);
             Assert.AreEqual(name, churchEvent.Name);
             Assert.AreEqual(longName, churchEvent.LongName);

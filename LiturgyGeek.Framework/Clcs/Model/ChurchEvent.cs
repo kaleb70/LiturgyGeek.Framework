@@ -10,7 +10,7 @@ namespace LiturgyGeek.Framework.Clcs.Model
 {
     public class ChurchEvent
     {
-        public string? OccasionCode { get; set; }
+        public string? OccasionKey { get; set; }
 
         public List<ChurchDate> Dates { get; set; } = new List<ChurchDate>();
 
@@ -21,12 +21,12 @@ namespace LiturgyGeek.Framework.Clcs.Model
         public string? EventRankKey { get; set; }
 
         [JsonConstructor]
-        public ChurchEvent(string? occasionCode, string? name)
+        public ChurchEvent(string? occasionKey, string? name)
         {
-            if (occasionCode == null && name == null)
+            if (occasionKey == null && name == null)
                 throw new ArgumentNullException(null, "Either an occasion code or a name must be provided.");
 
-            OccasionCode = occasionCode;
+            OccasionKey = occasionKey;
             Name = name;
         }
     }

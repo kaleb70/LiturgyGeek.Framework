@@ -12,13 +12,13 @@ namespace LiturgyGeek.Framework.Calendars
     public class ChurchEvent : Clcs.Model.ChurchEvent, ICloneable<ChurchEvent>
     {
         [JsonConstructor]
-        public ChurchEvent(string? occasionCode, string? name)
-            : base(occasionCode, name)
+        public ChurchEvent(string? occasionKey, string? name)
+            : base(occasionKey, name)
         {
         }
 
-        internal ChurchEvent(string? occasionCode, IEnumerable<ChurchDate> dates, string? name, string? longName, string? eventRankKey)
-            : base(occasionCode, name)
+        internal ChurchEvent(string? occasionKey, IEnumerable<ChurchDate> dates, string? name, string? longName, string? eventRankKey)
+            : base(occasionKey, name)
         {
             Dates = dates.ToList();
             LongName = longName;
@@ -26,15 +26,15 @@ namespace LiturgyGeek.Framework.Calendars
         }
 
         public ChurchEvent(ChurchEvent other)
-            : base(other.OccasionCode, other.Name)
+            : base(other.OccasionKey, other.Name)
         {
             Dates = other.Dates.ToList();
             LongName = other.LongName;
             EventRankKey = other.EventRankKey;
         }
 
-        public static ChurchEvent ByOccasion(string occasionCode, string dates, string? name = default, string? shortName = default, string? eventRankKey = default)
-            => new ChurchEvent(occasionCode, ChurchDate.ParseCollection(dates), name, shortName, eventRankKey);
+        public static ChurchEvent ByOccasion(string occasionKey, string dates, string? name = default, string? shortName = default, string? eventRankKey = default)
+            => new ChurchEvent(occasionKey, ChurchDate.ParseCollection(dates), name, shortName, eventRankKey);
 
         public static ChurchEvent ByName(string dates, string name, string? shortName = default, string? eventRankKey = default)
             => new ChurchEvent(null, ChurchDate.ParseCollection(dates), name, shortName, eventRankKey);
@@ -46,8 +46,8 @@ namespace LiturgyGeek.Framework.Calendars
         public void Resolve(IChurchCalendarProvider provider)
         {
             ChurchOccasion? occasion = default;
-            if (OccasionCode != null && (Name == null || LongName == null))
-                provider.GetCommon().Occasions.TryGetValue(OccasionCode, out occasion);
+            if (OccasionKey != null && (Name == null || LongName == null))
+                provider.GetCommon().Occasions.TryGetValue(OccasionKey, out occasion);
 
             Name ??= occasion!.Name;
             LongName ??= occasion?.LongName ?? Name;
