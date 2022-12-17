@@ -1,6 +1,7 @@
 ﻿using LiturgyGeek.Framework.Calendars;
 using LiturgyGeek.Framework.Clcs.Dates;
 using LiturgyGeek.Framework.Clcs.Enums;
+using LiturgyGeek.Framework.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace LiturgyGeek.Framework.Test.Calendars
         private readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
         {
             ReadCommentHandling = JsonCommentHandling.Skip,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            PropertyNamingPolicy = JsonNamingPolicyEx.CamelCaseEx,
             IgnoreReadOnlyFields = true,
         };
 
@@ -33,8 +34,8 @@ namespace LiturgyGeek.Framework.Test.Calendars
                 Assert.AreEqual(CalendarReckoning.Julian, calendar.PaschalReckoning);
 
                 Assert.AreEqual(2, calendar.EventRanks.Count);
-                VerifyEventRank(calendar.EventRanks[0], 1, "great.feast", false, true);
-                VerifyEventRank(calendar.EventRanks[1], 3, "vigil", false, true);
+                VerifyEventRank(calendar.EventRanks["great.feast"], 1, false, true);
+                VerifyEventRank(calendar.EventRanks["vigil"], 3, false, true);
 
                 Assert.AreEqual(2, calendar.Seasons.Count);
                 VerifySeason(calendar.Seasons[0], "ordinary", "1/1", "12/31", true);
@@ -46,12 +47,11 @@ namespace LiturgyGeek.Framework.Test.Calendars
             }
         }
 
-        private void VerifyEventRank(ChurchEventRank eventRank, int precedence, string rankCode, bool monthViewHeadline, bool monthViewContent)
+        private void VerifyEventRank(ChurchEventRank eventRank, int precedence, bool monthViewHeadline, bool monthViewContent)
         {
             Assert.AreEqual(precedence, eventRank.Precedence);
-            Assert.AreEqual(rankCode, eventRank.RankCode);
-            Assert.AreEqual(monthViewHeadline, eventRank.MonthViewHeadline);
-            Assert.AreEqual(monthViewContent, eventRank.MonthViewContent);
+            Assert.AreEqual(monthViewHeadline, eventRank._MonthViewHeadline);
+            Assert.AreEqual(monthViewContent, eventRank._MonthViewContent);
         }
 
         private void VerifySeason(ChurchSeason season, string occasionCode, ChurchDate startDate, ChurchDate endDate, bool isDefault)

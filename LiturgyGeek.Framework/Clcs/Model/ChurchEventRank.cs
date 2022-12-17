@@ -11,17 +11,9 @@ namespace LiturgyGeek.Framework.Clcs.Model
     {
         public int Precedence { get; set; }
 
-        public string RankCode { get; set; }
-
-        public bool MonthViewHeadline { get; set; }
-
-        public bool MonthViewContent { get; set; }
-
         [JsonConstructor]
-        public ChurchEventRank(int precedence, string rankCode)
+        public ChurchEventRank()
         {
-            Precedence = precedence;
-            RankCode = rankCode;
         }
     }
 }

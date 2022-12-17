@@ -21,7 +21,7 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public CalendarReckoning PaschalReckoning { get; set; }
 
-        public List<TEventRank> EventRanks { get; set; } = new List<TEventRank>();
+        public Dictionary<string, TEventRank> EventRanks { get; set; } = new Dictionary<string, TEventRank>();
 
         public List<TSeason> Seasons { get; set; } = new List<TSeason>();
 

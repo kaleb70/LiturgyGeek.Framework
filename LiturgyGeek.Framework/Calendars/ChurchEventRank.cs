@@ -10,17 +10,20 @@ namespace LiturgyGeek.Framework.Calendars
 {
     public class ChurchEventRank : Clcs.Model.ChurchEventRank, ICloneable<ChurchEventRank>
     {
+        public bool _MonthViewHeadline { get; set; }
+
+        public bool _MonthViewContent { get; set; }
+
         [JsonConstructor]
-        public ChurchEventRank(int precedence, string rankCode)
-            : base(precedence, rankCode)
+        public ChurchEventRank()
         {
         }
 
         public ChurchEventRank(ChurchEventRank other)
-            : base(other.Precedence, other.RankCode)
         {
-            MonthViewHeadline = other.MonthViewHeadline;
-            MonthViewContent = other.MonthViewContent;
+            Precedence = other.Precedence;
+            _MonthViewHeadline = other._MonthViewHeadline;
+            _MonthViewContent = other._MonthViewContent;
         }
 
         public ChurchEventRank Clone() => new ChurchEventRank(this);

@@ -3,18 +3,16 @@
   "traditionCode": "byzantine",
   "solarReckoning": "revisedJulian",
   "paschalReckoning": "julian",
-  "eventRanks": [
-    {
+  "eventRanks": {
+    "great.feast": {
       "precedence": 1,
-      "rankCode": "great.feast",
-      "monthViewContent": true
+      "_monthViewContent": true
     },
-    {
+    "vigil": {
       "precedence": 3,
-      "rankCode": "vigil",
-      "monthViewContent": true
+      "_monthViewContent": true
     }
-  ],
+  },
   "seasons": [
     {
       "occasionCode": "ordinary",
