@@ -23,7 +23,7 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public Dictionary<string, TEventRank> EventRanks { get; set; } = new Dictionary<string, TEventRank>();
 
-        public List<TSeason> Seasons { get; set; } = new List<TSeason>();
+        public Dictionary<string, TSeason> Seasons { get; set; } = new Dictionary<string, TSeason>();
 
         public List<TEvent> Events { get; set; } = new List<TEvent>();
 

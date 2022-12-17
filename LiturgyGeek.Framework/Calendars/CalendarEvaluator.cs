@@ -59,7 +59,7 @@ namespace LiturgyGeek.Framework.Calendars
                             (
                                 minDate,
                                 maxDate,
-                                calendar.Seasons.Select(s => (Season: s, s.StartDate, s.EndDate))
+                                calendar.Seasons.Select(s => (Season: s.Value, s.Value.StartDate, s.Value.EndDate))
                             )
                             .OrderBy(s => (s.EndDate - s.StartDate).TotalDays);
             var defaultSeason = seasons.Single(s => s.Season.IsDefault).Season;

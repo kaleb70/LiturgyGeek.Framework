@@ -17,15 +17,6 @@ namespace LiturgyGeek.Framework.Calendars
         {
         }
 
-        public ChurchCalendar(string name, string traditionCode, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning, IEnumerable<ChurchSeason> seasons, IEnumerable<ChurchEvent> events)
-            : base(name, traditionCode)
-        {
-            SolarReckoning = solarReckoning;
-            PaschalReckoning = paschalReckoning;
-            Seasons = seasons.ToList();
-            Events = events.ToList();
-        }
-
         public ChurchCalendar(string name, string traditionCode, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning)
             :  base(name, traditionCode)
         {

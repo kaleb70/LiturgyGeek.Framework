@@ -12,21 +12,15 @@ namespace LiturgyGeek.Framework.Calendars
     public class ChurchSeason : Clcs.Model.ChurchSeason, ICloneable<ChurchSeason>
     {
         [JsonConstructor]
-        public ChurchSeason(string? occasionCode, ChurchDate startDate, ChurchDate endDate, bool isDefault = false)
+        public ChurchSeason(ChurchDate startDate, ChurchDate endDate)
             : base(startDate, endDate)
-        {
-            OccasionCode = occasionCode;
-            IsDefault = isDefault;
-        }
-
-        public ChurchSeason(ChurchDate startDate, ChurchDate endDate, bool isDefault = false, IEnumerable<ChurchEvent>? events = default)
-            : this(default, startDate, endDate, isDefault)
         {
         }
 
         public ChurchSeason(ChurchSeason other)
-            : this(other.OccasionCode, other.StartDate, other.EndDate, other.IsDefault)
+            : this(other.StartDate, other.EndDate)
         {
+            IsDefault = other.IsDefault;
         }
 
         public ChurchSeason Clone() => new ChurchSeason(this);

@@ -10,8 +10,6 @@ namespace LiturgyGeek.Framework.Clcs.Model
 {
     public class ChurchSeason
     {
-        public string? OccasionCode { get; set; }
-
         public ChurchDate StartDate { get; set; }
 
         public ChurchDate EndDate { get; set; }

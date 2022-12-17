@@ -38,8 +38,8 @@ namespace LiturgyGeek.Framework.Test.Calendars
                 VerifyEventRank(calendar.EventRanks["vigil"], 3, false, true);
 
                 Assert.AreEqual(2, calendar.Seasons.Count);
-                VerifySeason(calendar.Seasons[0], "ordinary", "1/1", "12/31", true);
-                VerifySeason(calendar.Seasons[1], "advent", "11/15", "12/24", false);
+                VerifySeason(calendar.Seasons["ordinary"], "1/1", "12/31", true);
+                VerifySeason(calendar.Seasons["advent"], "11/15", "12/24", false);
 
                 Assert.AreEqual(2, calendar.Events.Count);
                 VerifyEvent(calendar.Events[0], "pascha", new ChurchDate[] { "1/Sunday" }, null, null, "great.feast");
@@ -54,9 +54,8 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreEqual(monthViewContent, eventRank._MonthViewContent);
         }
 
-        private void VerifySeason(ChurchSeason season, string occasionCode, ChurchDate startDate, ChurchDate endDate, bool isDefault)
+        private void VerifySeason(ChurchSeason season, ChurchDate startDate, ChurchDate endDate, bool isDefault)
         {
-            Assert.AreEqual(occasionCode, season.OccasionCode);
             Assert.AreEqual(startDate, season.StartDate);
             Assert.AreEqual(endDate, season.EndDate);
             Assert.AreEqual(isDefault, season.IsDefault);

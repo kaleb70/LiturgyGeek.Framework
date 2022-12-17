@@ -13,19 +13,17 @@
       "_monthViewContent": true
     }
   },
-  "seasons": [
-    {
-      "occasionCode": "ordinary",
+  "seasons": {
+    "ordinary": {
       "startDate": "1/1",
       "endDate": "12/31",
       "isDefault": true
     },
-    {
-      "occasionCode": "advent",
+    "advent": {
       "startDate": "11/15",
       "endDate": "12/24"
     }
-  ],
+  },
   "events": [
     {
       "occasionCode": "pascha",

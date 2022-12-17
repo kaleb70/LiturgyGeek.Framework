@@ -27,20 +27,19 @@ namespace LiturgyGeek.Framework.TestApp
 
         private static ChurchCalendar OcaCalendar = new ChurchCalendar("OCA", "byzantine", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
         {
-            Seasons = new List<ChurchSeason>
+            Seasons = new()
             {
-                new ChurchSeason("ordinary", "1/1", "12/31", isDefault: true),
-                new ChurchSeason("publican.pharisee", "-10/Sunday", "-10/Saturday"),
-                new ChurchSeason("cheesefare", "-8/Monday", "-7/Sunday"),
-                new ChurchSeason("lent", "-7/Monday", "-2/Friday"),
-                new ChurchSeason("holy.week", "-1/Saturday", "-1/Saturday"),
-                new ChurchSeason("pascha", "1/Sunday", "7/Saturday"),
-                new ChurchSeason("pentecost.week", "8/Sunday", "8/Saturday"),
-                new ChurchSeason("apostles.fast", "9/Monday", "6/28"),
-                new ChurchSeason("dormition.fast", "8/1", "8/14"),
-                new ChurchSeason("nativity.fast", "11/15", "12/19"),
-                new ChurchSeason("nativity.forefeast", "12/20", "12/24"),
-                new ChurchSeason("nativity.afterfeast", "12/26", "1/4"),
+                { "ordinary", new ChurchSeason("1/1", "12/31") { IsDefault = true } },
+                { "publican.pharisee", new ChurchSeason("-10/Sunday", "-10/Saturday") },
+                { "cheesefare", new ChurchSeason("-8/Monday", "-7/Sunday") },
+                { "lent", new ChurchSeason("-7/Monday", "-2/Friday") },
+                { "holy.week", new ChurchSeason("-1/Saturday", "-1/Saturday") },
+                { "pascha", new ChurchSeason("1/Sunday", "7/Saturday") },
+                { "pentecost.week", new ChurchSeason("8/Sunday", "8/Saturday") },
+                { "apostles.fast", new ChurchSeason("9/Monday", "6/28") },
+                { "dormition.fast",  new ChurchSeason("8/1", "8/14") },
+                { "advent", new ChurchSeason("11/15", "12/24") },
+                { "christmas", new ChurchSeason("12/26", "1/5") },
             },
             Events = new List<ChurchEvent>
             {
