@@ -62,12 +62,12 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreEqual(isDefault, season.IsDefault);
         }
 
-        private void VerifyEvent(ChurchEvent churchEvent, string occasionCode, ChurchDate[] dates, string? name, string? shortName, string? rankCode)
+        private void VerifyEvent(ChurchEvent churchEvent, string occasionCode, ChurchDate[] dates, string? name, string? longName, string? rankCode)
         {
             Assert.AreEqual(occasionCode, churchEvent.OccasionCode);
             CollectionAssert.AreEqual(dates, churchEvent.Dates);
             Assert.AreEqual(name, churchEvent.Name);
-            Assert.AreEqual(shortName, churchEvent.ShortName);
+            Assert.AreEqual(longName, churchEvent.LongName);
             Assert.AreEqual(rankCode, churchEvent.RankCode);
         }
 
@@ -83,13 +83,13 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreNotSame(calendar, result);
 
             Assert.AreEqual(common.Occasions["pascha"].Name, result.Events[0].Name);
-            Assert.AreEqual(common.Occasions["pascha"].ShortName, result.Events[0].ShortName);
+            Assert.AreEqual(common.Occasions["pascha"].LongName, result.Events[0].LongName);
 
             Assert.AreEqual(common.Occasions["christmas"].Name, result.Events[1].Name);
-            Assert.AreEqual(common.Occasions["christmas"].ShortName, result.Events[1].ShortName);
+            Assert.AreEqual(common.Occasions["christmas"].LongName, result.Events[1].LongName);
 
             Assert.AreEqual(calendar.Events[2].Name, result.Events[2].Name);
-            Assert.AreEqual(calendar.Events[2].ShortName, result.Events[2].ShortName);
+            Assert.AreEqual(calendar.Events[2].LongName, result.Events[2].LongName);
         }
 
         private class Provider : IChurchCalendarProvider
@@ -98,9 +98,9 @@ namespace LiturgyGeek.Framework.Test.Calendars
             {
                 Occasions = new Dictionary<string, ChurchOccasion>
                 {
-                    { "pascha", new ChurchOccasion("The Resurrection of Our Lord and Savior Jesus Christ", "Holy Pascha") },
-                    { "christmas", new ChurchOccasion("The Nativity of Our Lord God and Savior Jesus Christ", "Christmas") },
-                    { "conception.mary", new ChurchOccasion("The Conception of Mary", "Conception of Mary") },
+                    { "pascha", new ChurchOccasion("Holy Pascha", "The Resurrection of Our Lord and Savior Jesus Christ") },
+                    { "christmas", new ChurchOccasion("Christmas", "The Nativity of Our Lord God and Savior Jesus Christ") },
+                    { "conception.mary", new ChurchOccasion("Conception of Mary", "The Conception of Mary") },
                 },
             };
 

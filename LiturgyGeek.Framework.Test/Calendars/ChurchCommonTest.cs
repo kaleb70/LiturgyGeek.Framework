@@ -18,16 +18,16 @@ namespace LiturgyGeek.Framework.Test.Calendars
             {
                 Occasions = new Dictionary<string, ChurchOccasion>
                 {
-                    { "christmas", new ChurchOccasion("The Nativity of Our Lord and Savior Jesus Christ", "Christmas") },
+                    { "christmas", new ChurchOccasion("Christmas", "The Nativity of Our Lord and Savior Jesus Christ") },
                 },
             };
             var text = JsonSerializer.Serialize(original);
             var result = JsonSerializer.Deserialize<ChurchCommon>(text);
 
-            Assert.AreEqual("{\"Occasions\":{\"christmas\":{\"Name\":\"The Nativity of Our Lord and Savior Jesus Christ\",\"ShortName\":\"Christmas\"}}}", text);
+            Assert.AreEqual("{\"Occasions\":{\"christmas\":{\"Name\":\"Christmas\",\"LongName\":\"The Nativity of Our Lord and Savior Jesus Christ\"}}}", text);
 
-            Assert.AreEqual("The Nativity of Our Lord and Savior Jesus Christ", result!.Occasions["christmas"].Name);
-            Assert.AreEqual("Christmas", result!.Occasions["christmas"].ShortName);
+            Assert.AreEqual("Christmas", result!.Occasions["christmas"].Name);
+            Assert.AreEqual("The Nativity of Our Lord and Savior Jesus Christ", result!.Occasions["christmas"].LongName);
         }
     }
 }

@@ -17,11 +17,11 @@ namespace LiturgyGeek.Framework.Calendars
         {
         }
 
-        internal ChurchEvent(string? occasionCode, IEnumerable<ChurchDate> dates, string? name, string? shortName, string? rankCode)
+        internal ChurchEvent(string? occasionCode, IEnumerable<ChurchDate> dates, string? name, string? longName, string? rankCode)
             : base(occasionCode, name)
         {
             Dates = dates.ToList();
-            ShortName = shortName;
+            LongName = longName;
             RankCode = rankCode;
         }
 
@@ -29,7 +29,7 @@ namespace LiturgyGeek.Framework.Calendars
             : base(other.OccasionCode, other.Name)
         {
             Dates = other.Dates.ToList();
-            ShortName = other.ShortName;
+            LongName = other.LongName;
             RankCode = other.RankCode;
         }
 
@@ -46,11 +46,11 @@ namespace LiturgyGeek.Framework.Calendars
         public void Resolve(IChurchCalendarProvider provider)
         {
             ChurchOccasion? occasion = default;
-            if (OccasionCode != null && (Name == null || ShortName == null))
+            if (OccasionCode != null && (Name == null || LongName == null))
                 provider.GetCommon().Occasions.TryGetValue(OccasionCode, out occasion);
 
             Name ??= occasion!.Name;
-            ShortName ??= occasion?.ShortName ?? Name;
+            LongName ??= occasion?.LongName ?? Name;
         }
     }
 }

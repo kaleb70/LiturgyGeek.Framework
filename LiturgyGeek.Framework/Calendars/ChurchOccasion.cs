@@ -16,14 +16,14 @@ namespace LiturgyGeek.Framework.Calendars
         {
         }
 
-        public ChurchOccasion(string name, string? shortName)
+        public ChurchOccasion(string name, string? longName)
             : base(name)
         {
-            ShortName = shortName;
+            LongName = longName;
         }
 
         public ChurchOccasion(ChurchOccasion other)
-            : this(other.Name, other.ShortName)
+            : this(other.Name, other.LongName)
         {
         }
 
