@@ -18,7 +18,7 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public string? LongName { get; set; }
 
-        public string? RankCode { get; set; }
+        public string? EventRankKey { get; set; }
 
         [JsonConstructor]
         public ChurchEvent(string? occasionCode, string? name)

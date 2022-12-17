@@ -17,12 +17,12 @@ namespace LiturgyGeek.Framework.Calendars
         {
         }
 
-        internal ChurchEvent(string? occasionCode, IEnumerable<ChurchDate> dates, string? name, string? longName, string? rankCode)
+        internal ChurchEvent(string? occasionCode, IEnumerable<ChurchDate> dates, string? name, string? longName, string? eventRankKey)
             : base(occasionCode, name)
         {
             Dates = dates.ToList();
             LongName = longName;
-            RankCode = rankCode;
+            EventRankKey = eventRankKey;
         }
 
         public ChurchEvent(ChurchEvent other)
@@ -30,14 +30,14 @@ namespace LiturgyGeek.Framework.Calendars
         {
             Dates = other.Dates.ToList();
             LongName = other.LongName;
-            RankCode = other.RankCode;
+            EventRankKey = other.EventRankKey;
         }
 
-        public static ChurchEvent ByOccasion(string occasionCode, string dates, string? name = default, string? shortName = default, string? rankCode = default)
-            => new ChurchEvent(occasionCode, ChurchDate.ParseCollection(dates), name, shortName, rankCode);
+        public static ChurchEvent ByOccasion(string occasionCode, string dates, string? name = default, string? shortName = default, string? eventRankKey = default)
+            => new ChurchEvent(occasionCode, ChurchDate.ParseCollection(dates), name, shortName, eventRankKey);
 
-        public static ChurchEvent ByName(string dates, string name, string? shortName = default, string? rankCode = default)
-            => new ChurchEvent(null, ChurchDate.ParseCollection(dates), name, shortName, rankCode);
+        public static ChurchEvent ByName(string dates, string name, string? shortName = default, string? eventRankKey = default)
+            => new ChurchEvent(null, ChurchDate.ParseCollection(dates), name, shortName, eventRankKey);
 
         public ChurchEvent Clone() => new ChurchEvent(this);
 
