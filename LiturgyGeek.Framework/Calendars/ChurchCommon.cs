@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchCommon : ICloneable<ChurchCommon>
+    public class ChurchCommon : Clcs.Model.ChurchCommon<ChurchOccasion>, ICloneable<ChurchCommon>
     {
-        public Dictionary<string, ChurchOccasion> Occasions { get; init; } = new Dictionary<string, ChurchOccasion>();
-
         public ChurchCommon()
         {
         }

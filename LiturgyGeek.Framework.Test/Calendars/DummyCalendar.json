@@ -1,0 +1,43 @@
+{
+  "name": "Dummy Calendar",
+  "traditionCode": "byzantine",
+  "solarReckoning": "revisedJulian",
+  "paschalReckoning": "julian",
+  "eventRanks": [
+    {
+      "precedence": 1,
+      "rankCode": "great.feast",
+      "monthViewContent": true
+    },
+    {
+      "precedence": 3,
+      "rankCode": "vigil",
+      "monthViewContent": true
+    }
+  ],
+  "seasons": [
+    {
+      "occasionCode": "ordinary",
+      "startDate": "1/1",
+      "endDate": "12/31",
+      "isDefault": true
+    },
+    {
+      "occasionCode": "advent",
+      "startDate": "11/15",
+      "endDate": "12/24"
+    }
+  ],
+  "events": [
+    {
+      "occasionCode": "pascha",
+      "dates": [ "1/Sunday" ],
+      "rankCode": "great.feast"
+    },
+    {
+      "occasionCode": "holy.cross",
+      "dates": [ "9/14" ],
+      "rankCode": "great.feast"
+    }
+  ]
+}

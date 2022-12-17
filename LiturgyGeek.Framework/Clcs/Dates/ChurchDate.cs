@@ -1,13 +1,15 @@
-﻿using LiturgyGeek.Framework.Globalization;
+﻿using LiturgyGeek.Framework.Core;
+using LiturgyGeek.Framework.Globalization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Core
+namespace LiturgyGeek.Framework.Clcs.Dates
 {
     [JsonConverter(typeof(ChurchDateJsonConverter))]
     public abstract class ChurchDate
@@ -22,6 +24,34 @@ namespace LiturgyGeek.Framework.Core
 
         public static IEnumerable<ChurchDate> ParseCollection(string text, CultureInfo cultureInfo)
             => text.Split(semicolonSeparator).Where(t => !string.IsNullOrWhiteSpace(t)).Select(t => Parse(t, cultureInfo));
+
+        public static bool TryParse(string text, [NotNullWhen(true)] out ChurchDate? result)
+        {
+            try
+            {
+                result = Parse(text);
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
+        }
+
+        public static bool TryParse(string text, CultureInfo cultureInfo, [NotNullWhen(true)] out ChurchDate? result)
+        {
+            try
+            {
+                result = Parse(text, cultureInfo);
+                return true;
+            }
+            catch
+            {
+                result = null;
+                return false;
+            }
+        }
 
         public static ChurchDate Parse(string text) => Parse(text, CultureInfo.InvariantCulture);
 
@@ -102,5 +132,9 @@ namespace LiturgyGeek.Framework.Core
         public abstract bool IsRecurring { get; }
 
         public abstract DateTime? Resolve(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default);
+
+        public bool Equals(string s) => TryParse(s, out var other) && Equals(other);
+
+        public bool Equals(string s, CultureInfo cultureInfo) => TryParse(s, cultureInfo, out var other) && Equals(other);
     }
 }

@@ -1,45 +1,41 @@
-﻿using LiturgyGeek.Framework.Core;
+﻿using LiturgyGeek.Framework.Clcs.Enums;
+using LiturgyGeek.Framework.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchCalendar : ICloneable<ChurchCalendar>
+    public class ChurchCalendar : Clcs.Model.ChurchCalendar<ChurchEventRank, ChurchSeason, ChurchEvent>, ICloneable<ChurchCalendar>
     {
-        public string Name { get; set; }
-
-        public CalendarReckoning SolarReckoning { get; set; }
-
-        public CalendarReckoning PaschalReckoning { get; set; }
-
-        public List<ChurchEventRank> EventRanks { get; set; } = new List<ChurchEventRank>();
-
-        public List<ChurchSeason> Seasons { get; set; } = new List<ChurchSeason>();
-
-        public List<ChurchEvent> Events { get; set; } = new List<ChurchEvent>();
-
-        public ChurchCalendar(string name, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning, IEnumerable<ChurchSeason> seasons, IEnumerable<ChurchEvent> events)
+        [JsonConstructor]
+        public ChurchCalendar(string name, string traditionCode)
+            : base(name, traditionCode)
         {
-            Name = name;
+        }
+
+        public ChurchCalendar(string name, string traditionCode, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning, IEnumerable<ChurchSeason> seasons, IEnumerable<ChurchEvent> events)
+            : base(name, traditionCode)
+        {
             SolarReckoning = solarReckoning;
             PaschalReckoning = paschalReckoning;
             Seasons = seasons.ToList();
             Events = events.ToList();
         }
 
-        public ChurchCalendar(string name, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning)
+        public ChurchCalendar(string name, string traditionCode, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning)
+            :  base(name, traditionCode)
         {
-            Name = name;
             SolarReckoning = solarReckoning;
             PaschalReckoning = paschalReckoning;
         }
 
         public ChurchCalendar(ChurchCalendar other)
+            : base(other.Name, other.TraditionCode)
         {
-            Name = other.Name;
             SolarReckoning = other.SolarReckoning;
             PaschalReckoning = other.PaschalReckoning;
             EventRanks = other.EventRanks.Clone();

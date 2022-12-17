@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Core
+namespace LiturgyGeek.Framework.Clcs.Dates
 {
     public static class DateTimeExtensions
     {

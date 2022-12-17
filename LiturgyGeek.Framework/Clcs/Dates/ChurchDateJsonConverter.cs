@@ -7,7 +7,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Core
+namespace LiturgyGeek.Framework.Clcs.Dates
 {
     public class ChurchDateJsonConverter : JsonConverter<ChurchDate>
     {

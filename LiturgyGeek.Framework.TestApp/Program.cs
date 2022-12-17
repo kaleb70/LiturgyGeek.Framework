@@ -1,4 +1,5 @@
 ﻿using LiturgyGeek.Framework.Calendars;
+using LiturgyGeek.Framework.Clcs.Enums;
 using LiturgyGeek.Framework.Core;
 using LiturgyGeek.Framework.Globalization;
 
@@ -24,7 +25,7 @@ namespace LiturgyGeek.Framework.TestApp
             }
         }
 
-        private static ChurchCalendar OcaCalendar = new ChurchCalendar("OCA", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
+        private static ChurchCalendar OcaCalendar = new ChurchCalendar("OCA", "byzantine", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
         {
             Seasons = new List<ChurchSeason>
             {

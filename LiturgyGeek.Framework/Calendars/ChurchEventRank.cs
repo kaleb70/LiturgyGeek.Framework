@@ -8,23 +8,19 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchEventRank : ICloneable<ChurchEventRank>
+    public class ChurchEventRank : Clcs.Model.ChurchEventRank, ICloneable<ChurchEventRank>
     {
-        public int Precedence { get; set; }
-
-        public string RankCode { get; set; }
-
         [JsonConstructor]
         public ChurchEventRank(int precedence, string rankCode)
+            : base(precedence, rankCode)
         {
-            Precedence = precedence;
-            RankCode = rankCode;
         }
 
         public ChurchEventRank(ChurchEventRank other)
+            : base(other.Precedence, other.RankCode)
         {
-            Precedence = other.Precedence;
-            RankCode = other.RankCode;
+            MonthViewHeadline = other.MonthViewHeadline;
+            MonthViewContent = other.MonthViewContent;
         }
 
         public ChurchEventRank Clone() => new ChurchEventRank(this);

@@ -6,14 +6,14 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace LiturgyGeek.Framework.Core
+namespace LiturgyGeek.Framework.Clcs.Dates
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Interface, AllowMultiple = false)]
     public class JsonStringEnumConverterAttribute : JsonConverterAttribute
     {
         private static readonly JsonNamingPolicy?[] namingPolicies = new[]
         {
-            default(JsonNamingPolicy?),
+            default,
             JsonNamingPolicy.CamelCase,
         };
 

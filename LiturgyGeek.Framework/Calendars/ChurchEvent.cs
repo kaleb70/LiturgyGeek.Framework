@@ -1,4 +1,5 @@
-﻿using LiturgyGeek.Framework.Core;
+﻿using LiturgyGeek.Framework.Clcs.Dates;
+using LiturgyGeek.Framework.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,38 +9,28 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchEvent : ICloneable<ChurchEvent>
+    public class ChurchEvent : Clcs.Model.ChurchEvent, ICloneable<ChurchEvent>
     {
-        public string? OccasionCode { get; set; }
-
-        public List<ChurchDate> Dates { get; set; }
-
-        public string? Name { get; set; }
-
-        public string? ShortName { get; set; }
-
-        public string? RankCode { get; set; }
-
         [JsonConstructor]
-        internal ChurchEvent(string? occasionCode, IEnumerable<ChurchDate> dates, string? name, string? shortName, string? rankCode)
+        public ChurchEvent(string? occasionCode, string? name)
+            : base(occasionCode, name)
         {
-            if (occasionCode == null && name == null)
-                throw new ArgumentNullException("Either an occasion code or a name must be provided.");
+        }
 
-            OccasionCode = occasionCode;
+        internal ChurchEvent(string? occasionCode, IEnumerable<ChurchDate> dates, string? name, string? shortName, string? rankCode)
+            : base(occasionCode, name)
+        {
             Dates = dates.ToList();
-            Name = name;
             ShortName = shortName;
             RankCode = rankCode;
         }
 
-        public ChurchEvent(ChurchEvent Other)
+        public ChurchEvent(ChurchEvent other)
+            : base(other.OccasionCode, other.Name)
         {
-            OccasionCode = Other.OccasionCode;
-            Dates = Other.Dates.ToList();
-            Name = Other.Name;
-            ShortName = Other.ShortName;
-            RankCode = Other.RankCode;
+            Dates = other.Dates.ToList();
+            ShortName = other.ShortName;
+            RankCode = other.RankCode;
         }
 
         public static ChurchEvent ByOccasion(string occasionCode, string dates, string? name = default, string? shortName = default, string? rankCode = default)

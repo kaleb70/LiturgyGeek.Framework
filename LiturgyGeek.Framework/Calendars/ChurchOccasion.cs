@@ -8,23 +8,23 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchOccasion : ICloneable<ChurchOccasion>
+    public class ChurchOccasion : Clcs.Model.ChurchOccasion, ICloneable<ChurchOccasion>
     {
-        public string Name { get; set; }
-
-        public string? ShortName { get; set; }
-
         [JsonConstructor]
-        public ChurchOccasion(string name, string? shortName = null)
+        public ChurchOccasion(string name)
+            : base(name)
         {
-            Name = name;
+        }
+
+        public ChurchOccasion(string name, string? shortName)
+            : base(name)
+        {
             ShortName = shortName;
         }
 
         public ChurchOccasion(ChurchOccasion other)
+            : this(other.Name, other.ShortName)
         {
-            this.Name = other.Name;
-            ShortName = other.ShortName;
         }
 
         public ChurchOccasion Clone() => new ChurchOccasion(this);

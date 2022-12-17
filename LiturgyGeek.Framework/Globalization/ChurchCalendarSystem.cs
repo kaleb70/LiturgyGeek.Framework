@@ -1,4 +1,4 @@
-﻿using LiturgyGeek.Framework.Core;
+﻿using LiturgyGeek.Framework.Clcs.Dates;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -20,13 +20,35 @@ namespace LiturgyGeek.Framework.Globalization
             MoveableCalendar = moveableCalendar;
         }
 
-        public IEnumerable<(TEvent Event, DateTime Date)> ResolveAll<TEvent>(DateTime startDate, DateTime endDate, IEnumerable<(TEvent Event, ChurchDate Date)> churchEvents)
+        public IEnumerable<(TSeason Season, DateTime StartDate, DateTime EndDate)> ResolveAll<TSeason>(DateTime minDate, DateTime maxDate, IEnumerable<(TSeason Season, ChurchDate StartDate, ChurchDate EndDate)> seasons)
         {
-            startDate = startDate.Date;
-            endDate = endDate.Date;
+            minDate = minDate.Date;
+            maxDate = maxDate.Date;
 
-            int startYear = startDate.Month < 4 ? startDate.Year - 1 : startDate.Year;
-            int endYear = endDate.Month > 9 ? endDate.Year + 1 : endDate.Year;
+            int startYear = minDate.Month < 4 ? minDate.Year - 1 : minDate.Year;
+            int endYear = maxDate.Month > 9 ? maxDate.Year + 1 : maxDate.Year;
+
+            for (int year = startYear; year <= endYear; year++)
+            {
+                foreach (var season in seasons)
+                {
+                    DateTime? resolvedStartDate = season.StartDate.Resolve(this, year);
+                    DateTime? resolvedEndDate = season.EndDate.Resolve(this, year);
+                    if (resolvedStartDate > resolvedEndDate && resolvedStartDate!.GetType() == resolvedEndDate!.GetType())
+                        resolvedEndDate = season.EndDate.Resolve(this, year + 1);
+                    if (resolvedStartDate <= resolvedEndDate && resolvedEndDate >= minDate && resolvedStartDate < maxDate)
+                        yield return (Season: season.Season, StartDate: resolvedStartDate.Value, EndDate: resolvedEndDate.Value);
+                }
+            }
+        }
+
+        public IEnumerable<(TEvent Event, DateTime Date)> ResolveAll<TEvent>(DateTime minDate, DateTime maxDate, IEnumerable<(TEvent Event, ChurchDate Date)> churchEvents)
+        {
+            minDate = minDate.Date;
+            maxDate = maxDate.Date;
+
+            int startYear = minDate.Month < 4 ? minDate.Year - 1 : minDate.Year;
+            int endYear = maxDate.Month > 9 ? maxDate.Year + 1 : maxDate.Year;
 
             for (int year = startYear; year <= endYear; year++)
             {
@@ -36,7 +58,7 @@ namespace LiturgyGeek.Framework.Globalization
                     do
                     {
                         resolvedDate = churchEvent.Date.Resolve(this, year, resolvedDate);
-                        if (resolvedDate >= startDate && resolvedDate < endDate)
+                        if (resolvedDate >= minDate && resolvedDate < maxDate)
                             yield return (Event: churchEvent.Event, Date: resolvedDate.Value);
 
                     } while (resolvedDate.HasValue);
