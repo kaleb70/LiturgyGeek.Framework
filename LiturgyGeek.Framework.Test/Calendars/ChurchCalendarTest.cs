@@ -14,19 +14,12 @@ namespace LiturgyGeek.Framework.Test.Calendars
     [TestClass]
     public class ChurchCalendarTest
     {
-        private readonly JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions
-        {
-            ReadCommentHandling = JsonCommentHandling.Skip,
-            PropertyNamingPolicy = JsonNamingPolicyEx.CamelCaseEx,
-            IgnoreReadOnlyFields = true,
-        };
-
         [TestMethod]
         public void TestDeserialize()
         {
             using (var stream = File.OpenRead(@"Calendars\DummyCalendar.json"))
             {
-                var calendar = JsonSerializer.Deserialize<ChurchCalendar>(stream, jsonSerializerOptions)!;
+                var calendar = JsonSerializer.Deserialize<ChurchCalendar>(stream, Helpers.JsonSerializerOptions)!;
 
                 Assert.AreEqual("Dummy Calendar", calendar.Name);
                 Assert.AreEqual("byzantine", calendar.TraditionCode);

@@ -64,7 +64,7 @@ namespace LiturgyGeek.Framework.Calendars
                 _MonthViewHeadline = eventRank._MonthViewHeadline;
                 _MonthViewContent = eventRank._MonthViewContent;
             }
-            Name ??= occasion!.Name;
+            Name ??= occasion?.Name ?? "";
             LongName ??= occasion?.LongName ?? Name;
         }
     }

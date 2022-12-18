@@ -54,15 +54,16 @@ namespace LiturgyGeek.Framework.Calendars
                                 maxDate,
                                 calendar.Events.SelectMany(Event => Event.Dates.Select(Date => (Event, Date)))
                             )
-                            .OrderBy(e => e.Date);
+                            .OrderBy(e => e.Date)
+                            .ToArray();
             var seasons = calendarSystem.ResolveAll
                             (
                                 minDate,
                                 maxDate,
                                 calendar.Seasons.Select(s => (Season: s.Value, s.Value.StartDate, s.Value.EndDate))
                             )
-                            .OrderBy(s => (s.EndDate - s.StartDate).TotalDays);
-            var defaultSeason = seasons.Single(s => s.Season.IsDefault).Season;
+                            .OrderBy(s => (s.EndDate - s.StartDate).TotalDays)
+                            .ToArray();
             return Enumerable.Range(0, (maxDate - minDate).Days)
                                 .Select(i => minDate.AddDays(i))
                                 .Select(d => new CalendarDay(d, seasons.FirstOrDefault(s => s.StartDate <= d && s.EndDate >= d).Season)
