@@ -11,6 +11,10 @@ namespace LiturgyGeek.Framework.Calendars
 {
     public class ChurchEvent : Clcs.Model.ChurchEvent, ICloneable<ChurchEvent>
     {
+        public bool? _MonthViewHeadline { get; set; }
+
+        public bool? _MonthViewContent { get; set; }
+
         [JsonConstructor]
         public ChurchEvent(string? occasionKey, string? name)
             : base(occasionKey, name)
@@ -43,12 +47,23 @@ namespace LiturgyGeek.Framework.Calendars
 
         object ICloneable.Clone() => Clone();
 
-        public void Resolve(IChurchCalendarProvider provider)
+        public void Resolve(ChurchCalendar calendar, IChurchCalendarProvider provider)
         {
             ChurchOccasion? occasion = default;
             if (OccasionKey != null && (Name == null || LongName == null))
                 provider.GetCommon().Occasions.TryGetValue(OccasionKey, out occasion);
 
+            if (_MonthViewHeadline.HasValue || _MonthViewContent.HasValue)
+            {
+                _MonthViewHeadline ??= false;
+                _MonthViewContent ??= false;
+            }
+            else if (EventRankKey != null)
+            {
+                var eventRank = calendar.EventRanks[EventRankKey];
+                _MonthViewHeadline = eventRank._MonthViewHeadline;
+                _MonthViewContent = eventRank._MonthViewContent;
+            }
             Name ??= occasion!.Name;
             LongName ??= occasion?.LongName ?? Name;
         }
