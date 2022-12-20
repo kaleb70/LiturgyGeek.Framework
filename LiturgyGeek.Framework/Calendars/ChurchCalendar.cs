@@ -9,26 +9,27 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchCalendar : Clcs.Model.ChurchCalendar<ChurchEventRank, ChurchSeason, ChurchEvent>, ICloneable<ChurchCalendar>
+    public class ChurchCalendar : Clcs.Model.ChurchCalendar<ChurchRule, ChurchRuleGroup, ChurchEventRank, ChurchSeason, ChurchEvent>, ICloneable<ChurchCalendar>
     {
         [JsonConstructor]
-        public ChurchCalendar(string name, string traditionCode)
-            : base(name, traditionCode)
+        public ChurchCalendar(string name, string traditionKey)
+            : base(name, traditionKey)
         {
         }
 
-        public ChurchCalendar(string name, string traditionCode, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning)
-            :  base(name, traditionCode)
+        public ChurchCalendar(string name, string traditionKey, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning)
+            :  base(name, traditionKey)
         {
             SolarReckoning = solarReckoning;
             PaschalReckoning = paschalReckoning;
         }
 
         public ChurchCalendar(ChurchCalendar other)
-            : base(other.Name, other.TraditionCode)
+            : base(other.Name, other.TraditionKey)
         {
             SolarReckoning = other.SolarReckoning;
             PaschalReckoning = other.PaschalReckoning;
+            RuleGroups = other.RuleGroups.Clone();
             EventRanks = other.EventRanks.Clone();
             Seasons = other.Seasons.Clone();
             Events = other.Events.Clone();

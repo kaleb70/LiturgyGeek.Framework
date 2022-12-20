@@ -10,6 +10,6 @@ namespace LiturgyGeek.Framework.Calendars
     {
         ChurchCommon GetCommon();
 
-        ChurchCalendar GetCalendar(string churchCalendarCode);
+        ChurchCalendar GetCalendar(string calendarKey);
     }
 }

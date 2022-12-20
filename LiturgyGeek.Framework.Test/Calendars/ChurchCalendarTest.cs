@@ -22,9 +22,18 @@ namespace LiturgyGeek.Framework.Test.Calendars
                 var calendar = JsonSerializer.Deserialize<ChurchCalendar>(stream, Helpers.JsonSerializerOptions)!;
 
                 Assert.AreEqual("Dummy Calendar", calendar.Name);
-                Assert.AreEqual("byzantine", calendar.TraditionCode);
+                Assert.AreEqual("byzantine", calendar.TraditionKey);
                 Assert.AreEqual(CalendarReckoning.RevisedJulian, calendar.SolarReckoning);
                 Assert.AreEqual(CalendarReckoning.Julian, calendar.PaschalReckoning);
+
+                Assert.AreEqual(2, calendar.RuleGroups.Count);
+
+                VerifyRuleGroup(calendar.RuleGroups["fast"], 2);
+                VerifyRule(calendar.RuleGroups["fast"].Rules["fast.strict"], "Fast", "Strict Fast");
+                VerifyRule(calendar.RuleGroups["fast"].Rules["fast.none"], "No Fast", null);
+
+                VerifyRuleGroup(calendar.RuleGroups["colors"], 1);
+                VerifyRule(calendar.RuleGroups["colors"].Rules["colors.green"], "Green", null);
 
                 Assert.AreEqual(2, calendar.EventRanks.Count);
                 VerifyEventRank(calendar.EventRanks["great.feast"], 1, false, true);
@@ -38,6 +47,17 @@ namespace LiturgyGeek.Framework.Test.Calendars
                 VerifyEvent(calendar.Events[0], "pascha", new ChurchDate[] { "1/Sunday" }, null, null, "great.feast");
                 VerifyEvent(calendar.Events[1], "holy.cross", new ChurchDate[] { "9/14" }, null, null, "great.feast");
             }
+        }
+
+        private void VerifyRuleGroup(ChurchRuleGroup ruleGroup, int ruleCount)
+        {
+            Assert.AreEqual(ruleCount, ruleGroup.Rules.Count);
+        }
+
+        private void VerifyRule(ChurchRule rule, string summary, string? elaboration)
+        {
+            Assert.AreEqual(summary, rule.Summary);
+            Assert.AreEqual(elaboration, rule.Elaboration);
         }
 
         private void VerifyEventRank(ChurchEventRank eventRank, int precedence, bool monthViewHeadline, bool monthViewContent)
@@ -114,7 +134,7 @@ namespace LiturgyGeek.Framework.Test.Calendars
 
             public ChurchCommon GetCommon() => common;
 
-            public ChurchCalendar GetCalendar(string churchCalendarCode) => calendars[churchCalendarCode];
+            public ChurchCalendar GetCalendar(string calendarKey) => calendars[calendarKey];
         }
     }
 }

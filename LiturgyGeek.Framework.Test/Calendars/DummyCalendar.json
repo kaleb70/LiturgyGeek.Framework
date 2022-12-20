@@ -1,8 +1,28 @@
 {
   "name": "Dummy Calendar",
-  "traditionCode": "byzantine",
+  "traditionKey": "byzantine",
   "solarReckoning": "revisedJulian",
   "paschalReckoning": "julian",
+  "ruleGroups": {
+    "fast": {
+      "rules": {
+        "fast.strict": {
+          "summary": "Fast",
+          "elaboration": "Strict Fast"
+        },
+        "fast.none": {
+          "summary": "No Fast"
+        }
+      }
+    },
+    "colors": {
+      "rules": {
+        "colors.green": {
+          "summary": "Green"
+        }
+      }
+    }
+  },
   "eventRanks": {
     "great.feast": {
       "precedence": 1,

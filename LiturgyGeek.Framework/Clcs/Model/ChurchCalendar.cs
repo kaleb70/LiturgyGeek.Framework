@@ -8,18 +8,22 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Clcs.Model
 {
-    public class ChurchCalendar<TEventRank, TSeason, TEvent>
+    public class ChurchCalendar<TRule, TRuleGroup, TEventRank, TSeason, TEvent>
+        where TRule : ChurchRule
+        where TRuleGroup : ChurchRuleGroup<TRule>
         where TEventRank : ChurchEventRank
         where TSeason : ChurchSeason
         where TEvent : ChurchEvent
     {
         public string Name { get; set; }
 
-        public string TraditionCode { get; set; }
+        public string TraditionKey { get; set; }
 
         public CalendarReckoning SolarReckoning { get; set; }
 
         public CalendarReckoning PaschalReckoning { get; set; }
+
+        public Dictionary<string, TRuleGroup> RuleGroups { get; set; } = new Dictionary<string, TRuleGroup>();
 
         public Dictionary<string, TEventRank> EventRanks { get; set; } = new Dictionary<string, TEventRank>();
 
@@ -27,18 +31,18 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public List<TEvent> Events { get; set; } = new List<TEvent>();
 
-        public ChurchCalendar(string name, string traditionCode)
+        public ChurchCalendar(string name, string traditionKey)
         {
             Name = name;
-            TraditionCode = traditionCode;
+            TraditionKey = traditionKey;
         }
     }
 
-    public class ChurchCalendar : ChurchCalendar<ChurchEventRank, ChurchSeason, ChurchEvent>
+    public class ChurchCalendar : ChurchCalendar<ChurchRule, ChurchRuleGroup, ChurchEventRank, ChurchSeason, ChurchEvent>
     {
         [JsonConstructor]
-        public ChurchCalendar(string name, string traditionCode)
-            : base(name, traditionCode)
+        public ChurchCalendar(string name, string traditionKey)
+            : base(name, traditionKey)
         {
         }
     }

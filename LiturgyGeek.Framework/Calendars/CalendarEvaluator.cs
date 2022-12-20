@@ -39,14 +39,14 @@ namespace LiturgyGeek.Framework.Calendars
         public ChurchCalendarSystem GetCalendarSystem(ChurchCalendar calendar)
             => GetCalendarSystem(calendar.SolarReckoning, calendar.PaschalReckoning);
 
-        public ChurchCalendarSystem GetCalendarSystem(string churchCalendarCode)
-            => GetCalendarSystem(calendarProvider.GetCalendar(churchCalendarCode));
+        public ChurchCalendarSystem GetCalendarSystem(string calendarKey)
+            => GetCalendarSystem(calendarProvider.GetCalendar(calendarKey));
 
-        public CalendarDay[] Evaluate(string churchCalendarCode, DateTime minDate, DateTime maxDate)
+        public CalendarDay[] Evaluate(string calendarKey, DateTime minDate, DateTime maxDate)
         {
             minDate = minDate.Date;
             maxDate = maxDate.Date;
-            var calendar = calendarProvider.GetCalendar(churchCalendarCode).CloneAndResolve(calendarProvider);
+            var calendar = calendarProvider.GetCalendar(calendarKey).CloneAndResolve(calendarProvider);
             var calendarSystem = GetCalendarSystem(calendar);
             var events = calendarSystem.ResolveAll
                             (

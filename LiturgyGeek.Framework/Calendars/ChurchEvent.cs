@@ -24,7 +24,7 @@ namespace LiturgyGeek.Framework.Calendars
         internal ChurchEvent(string? occasionKey, IEnumerable<ChurchDate> dates, string? name, string? longName, string? eventRankKey)
             : base(occasionKey, name)
         {
-            Dates = dates.ToList();
+            Dates.AddRange(dates);
             LongName = longName;
             EventRankKey = eventRankKey;
         }
@@ -32,7 +32,7 @@ namespace LiturgyGeek.Framework.Calendars
         public ChurchEvent(ChurchEvent other)
             : base(other.OccasionKey, other.Name)
         {
-            Dates = other.Dates.ToList();
+            Dates.AddRange(other.Dates);
             LongName = other.LongName;
             EventRankKey = other.EventRankKey;
         }
@@ -53,12 +53,12 @@ namespace LiturgyGeek.Framework.Calendars
             if (OccasionKey != null && (Name == null || LongName == null))
                 provider.GetCommon().Occasions.TryGetValue(OccasionKey, out occasion);
 
-            if (_MonthViewHeadline.HasValue || _MonthViewContent.HasValue)
+            if (_MonthViewHeadline.HasValue || _MonthViewContent.HasValue || EventRankKey == null)
             {
                 _MonthViewHeadline ??= false;
                 _MonthViewContent ??= false;
             }
-            else if (EventRankKey != null)
+            else
             {
                 var eventRank = calendar.EventRanks[EventRankKey];
                 _MonthViewHeadline = eventRank._MonthViewHeadline;

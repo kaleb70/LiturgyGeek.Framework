@@ -24,9 +24,9 @@ namespace LiturgyGeek.Framework.Test.Calendars
 
         public class CalendarProvider : IChurchCalendarProvider
         {
-            public ChurchCalendar GetCalendar(string churchCalendarCode)
+            public ChurchCalendar GetCalendar(string calendarKey)
             {
-                using (var stream = File.OpenRead(@$"Calendars\{churchCalendarCode}.json"))
+                using (var stream = File.OpenRead(@$"Calendars\{calendarKey}.json"))
                     return JsonSerializer.Deserialize<ChurchCalendar>(stream, Helpers.JsonSerializerOptions)!;
             }
 
