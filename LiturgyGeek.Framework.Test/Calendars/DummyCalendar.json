@@ -37,7 +37,20 @@
     "ordinary": {
       "startDate": "1/1",
       "endDate": "12/31",
-      "isDefault": true
+      "isDefault": true,
+      "ruleCriteria": {
+        "fast": [
+          {
+            "ruleKey": "fast.strict",
+            "includeDates": [ "Wednesday", "Friday" ]
+          },
+          {
+            "ruleKey": "fast.fish",
+            "includeDates": [ "Wednesday", "Friday" ],
+            "includeRanks": [ "great.feast", "patron", "vigil" ]
+          }
+        ]
+      }
     },
     "advent": {
       "startDate": "11/15",

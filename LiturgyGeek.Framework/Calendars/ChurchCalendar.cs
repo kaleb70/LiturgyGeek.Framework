@@ -6,10 +6,11 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using ChurchRuleCriteria = LiturgyGeek.Framework.Clcs.Model.ChurchRuleCriteria;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchCalendar : Clcs.Model.ChurchCalendar<ChurchRule, ChurchRuleGroup, ChurchEventRank, ChurchSeason, ChurchEvent>, ICloneable<ChurchCalendar>
+    public class ChurchCalendar : Clcs.Model.ChurchCalendar<ChurchRule, ChurchRuleGroup, ChurchRuleCriteria, ChurchEventRank, ChurchSeason, ChurchEvent>, ICloneable<ChurchCalendar>
     {
         [JsonConstructor]
         public ChurchCalendar(string name, string traditionKey)

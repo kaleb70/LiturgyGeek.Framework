@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchSeason : Clcs.Model.ChurchSeason, ICloneable<ChurchSeason>
+    public class ChurchSeason : Clcs.Model.ChurchSeason<ChurchRuleCriteria>, ICloneable<ChurchSeason>
     {
         [JsonConstructor]
         public ChurchSeason(ChurchDate startDate, ChurchDate endDate)
@@ -21,6 +21,7 @@ namespace LiturgyGeek.Framework.Calendars
             : this(other.StartDate, other.EndDate)
         {
             IsDefault = other.IsDefault;
+            RuleCriteria = other.RuleCriteria.Clone();
         }
 
         public ChurchSeason Clone() => new ChurchSeason(this);

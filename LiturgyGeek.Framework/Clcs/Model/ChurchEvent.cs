@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Clcs.Model
 {
-    public class ChurchEvent
+    public class ChurchEvent<TRuleCriteria>
+        where TRuleCriteria : ChurchRuleCriteria
     {
         public string? OccasionKey { get; set; }
 
@@ -20,6 +21,8 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public string? EventRankKey { get; set; }
 
+        public Dictionary<string, TRuleCriteria[]> RuleCriteria { get; set; } = new Dictionary<string, TRuleCriteria[]>();
+
         [JsonConstructor]
         public ChurchEvent(string? occasionKey, string? name)
         {
@@ -28,6 +31,15 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
             OccasionKey = occasionKey;
             Name = name;
+        }
+    }
+
+    public class ChurchEvent : ChurchEvent<ChurchRuleCriteria>
+    {
+        [JsonConstructor]
+        public ChurchEvent(string? occasionKey, string? name)
+            : base(occasionKey, name)
+        {
         }
     }
 }

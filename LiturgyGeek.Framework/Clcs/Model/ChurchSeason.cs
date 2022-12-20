@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Clcs.Model
 {
-    public class ChurchSeason
+    public class ChurchSeason<TRuleCriteria> where TRuleCriteria : ChurchRuleCriteria
     {
         public ChurchDate StartDate { get; set; }
 
@@ -16,11 +16,22 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public bool IsDefault { get; set; }
 
+        public Dictionary<string, TRuleCriteria[]> RuleCriteria { get; set; } = new Dictionary<string, TRuleCriteria[]>();
+
         [JsonConstructor]
         public ChurchSeason(ChurchDate startDate, ChurchDate endDate)
         {
             StartDate = startDate;
             EndDate = endDate;
+        }
+    }
+
+    public class ChurchSeason : ChurchSeason<ChurchRuleCriteria>
+    {
+        [JsonConstructor]
+        public ChurchSeason(ChurchDate startDate, ChurchDate endDate)
+            : base(startDate, endDate)
+        {
         }
     }
 }

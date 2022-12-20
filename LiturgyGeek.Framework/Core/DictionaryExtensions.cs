@@ -12,5 +12,10 @@ namespace LiturgyGeek.Framework.Core
                 where TKey : notnull
                 where TValue : ICloneable<TValue>
             => new(dictionary.Select(e => new KeyValuePair<TKey, TValue>(e.Key, e.Value.Clone())));
+
+        public static Dictionary<TKey, TValue[]> Clone<TKey, TValue>(this Dictionary<TKey, TValue[]> dictionary)
+                where TKey : notnull
+                where TValue : ICloneable<TValue>
+            => new(dictionary.Select(e => new KeyValuePair<TKey, TValue[]>(e.Key, e.Value.Select(v => v.Clone()).ToArray())));
     }
 }

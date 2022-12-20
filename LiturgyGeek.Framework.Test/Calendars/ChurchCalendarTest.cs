@@ -40,8 +40,18 @@ namespace LiturgyGeek.Framework.Test.Calendars
                 VerifyEventRank(calendar.EventRanks["vigil"], 3, false, true);
 
                 Assert.AreEqual(2, calendar.Seasons.Count);
-                VerifySeason(calendar.Seasons["ordinary"], "1/1", "12/31", true);
-                VerifySeason(calendar.Seasons["advent"], "11/15", "12/24", false);
+
+                VerifySeason(calendar.Seasons["ordinary"], "1/1", "12/31", true, 1);
+                Assert.AreEqual(2, calendar.Seasons["ordinary"].RuleCriteria["fast"].Length);
+                VerifyRuleCriteria(calendar.Seasons["ordinary"].RuleCriteria["fast"][0],
+                                    "fast.strict",
+                                    includeDates: new ChurchDate[] { "Wednesday", "Friday" });
+                VerifyRuleCriteria(calendar.Seasons["ordinary"].RuleCriteria["fast"][1],
+                                    "fast.fish",
+                                    includeDates: new ChurchDate[] { "Wednesday", "Friday" },
+                                    includeRanks: new[] { "great.feast", "patron", "vigil" });
+
+                VerifySeason(calendar.Seasons["advent"], "11/15", "12/24", false, 0);
 
                 Assert.AreEqual(2, calendar.Events.Count);
                 VerifyEvent(calendar.Events[0], "pascha", new ChurchDate[] { "1/Sunday" }, null, null, "great.feast");
@@ -60,6 +70,22 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreEqual(elaboration, rule.Elaboration);
         }
 
+        private void VerifyRuleCriteria(ChurchRuleCriteria ruleCriteria,
+                                        string ruleKey,
+                                        ChurchDate? startDate = null,
+                                        ChurchDate? endDate = null,
+                                        ChurchDate[]? includeDates = null,
+                                        string[]? includeRanks = null,
+                                        ChurchDate[]? excludeDates = null)
+        {
+            Assert.AreEqual(ruleKey, ruleCriteria.RuleKey);
+            Assert.AreEqual(startDate, ruleCriteria.StartDate);
+            Assert.AreEqual(endDate, ruleCriteria.EndDate);
+            CollectionAssert.AreEqual(includeDates ?? new ChurchDate[0], ruleCriteria.IncludeDates);
+            CollectionAssert.AreEqual(includeRanks ?? new string[0], ruleCriteria.IncludeRanks);
+            CollectionAssert.AreEqual(excludeDates ?? new ChurchDate[0], ruleCriteria.ExcludeDates);
+        }
+
         private void VerifyEventRank(ChurchEventRank eventRank, int precedence, bool monthViewHeadline, bool monthViewContent)
         {
             Assert.AreEqual(precedence, eventRank.Precedence);
@@ -67,11 +93,12 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreEqual(monthViewContent, eventRank._MonthViewContent);
         }
 
-        private void VerifySeason(ChurchSeason season, ChurchDate startDate, ChurchDate endDate, bool isDefault)
+        private void VerifySeason(ChurchSeason season, ChurchDate startDate, ChurchDate endDate, bool isDefault, int ruleCriteriaCount)
         {
             Assert.AreEqual(startDate, season.StartDate);
             Assert.AreEqual(endDate, season.EndDate);
             Assert.AreEqual(isDefault, season.IsDefault);
+            Assert.AreEqual(ruleCriteriaCount, season.RuleCriteria.Count);
         }
 
         private void VerifyEvent(ChurchEvent churchEvent, string occasionKey, ChurchDate[] dates, string? name, string? longName, string? eventRankKey)

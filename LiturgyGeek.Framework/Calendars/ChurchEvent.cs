@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchEvent : Clcs.Model.ChurchEvent, ICloneable<ChurchEvent>
+    public class ChurchEvent : Clcs.Model.ChurchEvent<ChurchRuleCriteria>, ICloneable<ChurchEvent>
     {
         public bool? _MonthViewHeadline { get; set; }
 
@@ -35,6 +35,7 @@ namespace LiturgyGeek.Framework.Calendars
             Dates.AddRange(other.Dates);
             LongName = other.LongName;
             EventRankKey = other.EventRankKey;
+            RuleCriteria = other.RuleCriteria.Clone();
         }
 
         public static ChurchEvent ByOccasion(string occasionKey, string dates, string? name = default, string? shortName = default, string? eventRankKey = default)
