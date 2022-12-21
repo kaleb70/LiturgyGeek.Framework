@@ -1,4 +1,5 @@
-﻿using LiturgyGeek.Framework.Core;
+﻿using LiturgyGeek.Framework.Clcs.Dates;
+using LiturgyGeek.Framework.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,19 @@ namespace LiturgyGeek.Framework.Calendars
     public class ChurchRuleCriteria : Clcs.Model.ChurchRuleCriteria, ICloneable<ChurchRuleCriteria>
     {
         [JsonConstructor]
-        public ChurchRuleCriteria(string ruleKey)
-            : base(ruleKey)
+        public ChurchRuleCriteria(string ruleKey,
+                                    ChurchDate? startDate,
+                                    ChurchDate? endDate,
+                                    IReadOnlyList<ChurchDate>? includeDates,
+                                    IReadOnlyList<string>? includeRanks,
+                                    IReadOnlyList<ChurchDate>? excludeDates)
+            : base(ruleKey, startDate, endDate, includeDates, includeRanks, excludeDates)
         {
         }
 
         public ChurchRuleCriteria(ChurchRuleCriteria other)
-            : base(other.RuleKey)
+            : this(other.RuleKey, other.StartDate, other.EndDate, other.IncludeDates, other.IncludeRanks, other.ExcludeDates)
         {
-            StartDate = other.StartDate;
-            EndDate = other.EndDate;
-            IncludeDates.AddRange(other.IncludeDates);
-            IncludeRanks.AddRange(other.IncludeRanks);
-            ExcludeDates.AddRange(other.ExcludeDates);
         }
 
         public ChurchRuleCriteria Clone() => new ChurchRuleCriteria(this);

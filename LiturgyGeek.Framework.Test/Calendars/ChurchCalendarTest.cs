@@ -1,6 +1,7 @@
 ﻿using LiturgyGeek.Framework.Calendars;
 using LiturgyGeek.Framework.Clcs.Dates;
 using LiturgyGeek.Framework.Clcs.Enums;
+using ChurchRuleCriteria = LiturgyGeek.Framework.Clcs.Model.ChurchRuleCriteria;
 using LiturgyGeek.Framework.Core;
 using System;
 using System.Collections.Generic;
@@ -81,9 +82,9 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreEqual(ruleKey, ruleCriteria.RuleKey);
             Assert.AreEqual(startDate, ruleCriteria.StartDate);
             Assert.AreEqual(endDate, ruleCriteria.EndDate);
-            CollectionAssert.AreEqual(includeDates ?? new ChurchDate[0], ruleCriteria.IncludeDates);
-            CollectionAssert.AreEqual(includeRanks ?? new string[0], ruleCriteria.IncludeRanks);
-            CollectionAssert.AreEqual(excludeDates ?? new ChurchDate[0], ruleCriteria.ExcludeDates);
+            CollectionAssert.AreEqual(includeDates ?? new ChurchDate[0], ruleCriteria.IncludeDates.ToArray());
+            CollectionAssert.AreEqual(includeRanks ?? new string[0], ruleCriteria.IncludeRanks.ToArray());
+            CollectionAssert.AreEqual(excludeDates ?? new ChurchDate[0], ruleCriteria.ExcludeDates.ToArray());
         }
 
         private void VerifyEventRank(ChurchEventRank eventRank, int precedence, bool monthViewHeadline, bool monthViewContent)
