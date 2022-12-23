@@ -48,7 +48,7 @@ namespace LiturgyGeek.Framework.Calendars
 
         object ICloneable.Clone() => Clone();
 
-        public void Resolve(ChurchCalendar calendar, IChurchCalendarProvider provider)
+        public void Merge(ChurchCalendar calendar, IChurchCalendarProvider provider)
         {
             ChurchOccasion? occasion = default;
             if (OccasionKey != null && (Name == null || LongName == null))

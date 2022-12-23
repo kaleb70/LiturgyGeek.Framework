@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Clcs.Dates
 {
-    public sealed class MoveableDate : ChurchDate
+    public sealed class MovableDate : ChurchDate
     {
         public int Week { get; private init; }
 
@@ -16,7 +16,7 @@ namespace LiturgyGeek.Framework.Clcs.Dates
 
         private readonly int hashCode;
 
-        public MoveableDate(int week, DayOfWeek dayOfWeek)
+        public MovableDate(int week, DayOfWeek dayOfWeek)
         {
             Week = week;
             DayOfWeek = dayOfWeek;
@@ -31,7 +31,7 @@ namespace LiturgyGeek.Framework.Clcs.Dates
 
         public override bool Equals(object? obj)
         {
-            return obj is MoveableDate other
+            return obj is MovableDate other
                     && hashCode == other.hashCode
                     && Week == other.Week
                     && DayOfWeek == other.DayOfWeek;
@@ -44,12 +44,12 @@ namespace LiturgyGeek.Framework.Clcs.Dates
 
         public override bool IsRecurring => false;
 
-        public override DateTime? Resolve(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
+        public override DateTime? GetInstance(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
         {
             if (seed.HasValue)
                 return null;
 
-            var pascha = calendarSystem.MoveableCalendar.FindPascha(year);
+            var pascha = calendarSystem.MovableCalendar.FindPascha(year);
             int week = Week > 0 ? Week - 1 : Week;
             return pascha.AddDays(week * 7 + (int)DayOfWeek);
         }

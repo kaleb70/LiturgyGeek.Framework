@@ -12,7 +12,7 @@ namespace LiturgyGeek.Framework.Test.Calendars
     public class CalendarEvaluatorTest
     {
         [TestMethod]
-        public void TestEvaluateOneDay()
+        public void TestFiveWeeks()
         {
             var provider = new CalendarProvider();
             var evaluator = new CalendarEvaluator(provider);

@@ -112,13 +112,13 @@ namespace LiturgyGeek.Framework.Test.Calendars
         }
 
         [TestMethod]
-        public void TestCloneAndResolve()
+        public void TestCloneAndMerge()
         {
             var provider = new Provider();
             var common = provider.GetCommon();
             var calendar = provider.GetCalendar("OrthodoxNC");
 
-            var result = calendar.CloneAndResolve(provider);
+            var result = calendar.CloneAndMerge(provider);
 
             Assert.AreNotSame(calendar, result);
 

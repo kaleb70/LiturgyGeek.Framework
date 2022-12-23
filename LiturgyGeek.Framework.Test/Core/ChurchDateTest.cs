@@ -19,10 +19,10 @@ namespace LiturgyGeek.Framework.Test.Core
         }
 
         [TestMethod]
-        public void TestParseMoveableDate()
+        public void TestParseMovableDate()
         {
-            Assert.AreEqual(new MoveableDate(-1, DayOfWeek.Sunday), ChurchDate.Parse("-1/Sunday"));
-            Assert.AreEqual(new MoveableDate(6, DayOfWeek.Thursday), ChurchDate.Parse("6/Thursday"));
+            Assert.AreEqual(new MovableDate(-1, DayOfWeek.Sunday), ChurchDate.Parse("-1/Sunday"));
+            Assert.AreEqual(new MovableDate(6, DayOfWeek.Thursday), ChurchDate.Parse("6/Thursday"));
         }
 
         [TestMethod]
@@ -47,7 +47,7 @@ namespace LiturgyGeek.Framework.Test.Core
         [TestMethod]
         public void TestSerialization()
         {
-            var original = new DateContainer(new MoveableDate(-1, DayOfWeek.Sunday));
+            var original = new DateContainer(new MovableDate(-1, DayOfWeek.Sunday));
             var text = JsonSerializer.Serialize(original);
             var result = JsonSerializer.Deserialize<DateContainer>(text);
 

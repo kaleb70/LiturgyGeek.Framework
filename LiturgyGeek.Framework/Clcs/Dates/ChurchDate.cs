@@ -121,7 +121,7 @@ namespace LiturgyGeek.Framework.Clcs.Dates
                     throw new FormatException();
 
                 else
-                    return new MoveableDate(leftValue, GeneralParser.ParseDayOfWeek(parsed[0], cultureInfo));
+                    return new MovableDate(leftValue, GeneralParser.ParseDayOfWeek(parsed[0], cultureInfo));
             }
         }
 
@@ -131,7 +131,7 @@ namespace LiturgyGeek.Framework.Clcs.Dates
 
         public abstract bool IsRecurring { get; }
 
-        public abstract DateTime? Resolve(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default);
+        public abstract DateTime? GetInstance(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default);
 
         public bool Equals(string s) => TryParse(s, out var other) && Equals(other);
 

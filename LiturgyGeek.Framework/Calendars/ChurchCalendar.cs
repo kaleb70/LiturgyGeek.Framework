@@ -40,12 +40,12 @@ namespace LiturgyGeek.Framework.Calendars
 
         object ICloneable.Clone() => Clone();
 
-        public ChurchCalendar CloneAndResolve(IChurchCalendarProvider provider)
+        public ChurchCalendar CloneAndMerge(IChurchCalendarProvider provider)
         {
             var result = Clone();
 
             foreach (var churchEvent in result.Events)
-                churchEvent.Resolve(this, provider);
+                churchEvent.Merge(this, provider);
 
             return result;
         }

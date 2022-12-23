@@ -12,6 +12,8 @@ namespace LiturgyGeek.Framework.Calendars
 
         public ChurchSeason Season { get; set; }
 
+        public Dictionary<string, ChurchRule> Rules { get; set; } = new Dictionary<string, ChurchRule>();
+
         public List<ChurchEvent> Events { get; set; } = new List<ChurchEvent>();
 
         public CalendarDay(DateTime date, ChurchSeason season)

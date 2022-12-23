@@ -17,12 +17,12 @@ namespace LiturgyGeek.Framework.TestApp
             DateTime startDate = new DateTime(year, month, 1);
             DateTime endDate = startDate.AddMonths(1).AddDays(-1);
 
-            foreach (var churchEvent in calendar.ResolveAll(startDate, endDate,
-                                                            OcaCalendar.Events.SelectMany(Event => Event.Dates.Select(Date => (Event, Date))))
-                                        .OrderBy<(ChurchEvent Event, DateTime Date), DateTime>(e => e.Date))
-            {
-                Console.WriteLine($"{churchEvent.Date:d} {churchEvent.Event.Name}");
-            }
+            //foreach (var churchEvent in calendar.ResolveAll(startDate, endDate,
+            //                                                OcaCalendar.Events.SelectMany(Event => Event.Dates.Select(Date => (Event, Date))))
+            //                            .OrderBy<(ChurchEvent Event, DateTime Date), DateTime>(e => e.Date))
+            //{
+            //    Console.WriteLine($"{churchEvent.Date:d} {churchEvent.Event.Name}");
+            //}
         }
 
         private static ChurchCalendar OcaCalendar = new ChurchCalendar("OCA", "byzantine", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
