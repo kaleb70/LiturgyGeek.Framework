@@ -25,13 +25,15 @@ namespace LiturgyGeek.Framework.Clcs.Dates
 
         public override bool IsRecurring => true;
 
+        public override bool IsMovable => false;
+
         public override DateTime? GetInstance(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
         {
             if (!seed.HasValue)
                 return new DateTime(year, 1, 1, calendarSystem.FixedCalendar).First(DayOfWeek);
 
             var result = seed.Value.AddDays(7);
-            return result.Year == year ? result : default;
+            return result.Year == year ? result : default(DateTime?);
         }
     }
 }

@@ -131,7 +131,12 @@ namespace LiturgyGeek.Framework.Clcs.Dates
 
         public abstract bool IsRecurring { get; }
 
+        public abstract bool IsMovable { get; }
+
         public abstract DateTime? GetInstance(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default);
+
+        public virtual DateTime? GetInstanceFollowing(ChurchDate? priorDate, ChurchCalendarSystem calendarSystem, int year)
+            => GetInstance(calendarSystem, year);
 
         public bool Equals(string s) => TryParse(s, out var other) && Equals(other);
 

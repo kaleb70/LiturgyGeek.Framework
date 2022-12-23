@@ -199,6 +199,8 @@ namespace LiturgyGeek.Framework.Clcs.Dates
 
         public override bool IsRecurring => false;
 
+        public override bool IsMovable => false;
+
         public override DateTime? GetInstance(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
         {
             if (seed.HasValue)
@@ -234,6 +236,16 @@ namespace LiturgyGeek.Framework.Clcs.Dates
                 return default;
 
             return result;
+        }
+
+        public override DateTime? GetInstanceFollowing(ChurchDate? priorDate, ChurchCalendarSystem calendarSystem, int year)
+        {
+            if (priorDate is FixedDate priorFixedDate
+                        && (Month < priorFixedDate.Month
+                            || (Month == priorFixedDate.Month && Day < priorFixedDate.Day)))
+                ++year;
+
+            return GetInstance(calendarSystem, year);
         }
     }
 }

@@ -70,6 +70,8 @@ namespace LiturgyGeek.Framework.Clcs.Dates
 
         public override bool IsRecurring => true;
 
+        public override bool IsMovable => false;
+
         public override DateTime? GetInstance(ChurchCalendarSystem calendarSystem, int year, DateTime? seed = default)
         {
             DateTime result;
