@@ -47,6 +47,8 @@ namespace LiturgyGeek.Framework.Calendars
                 default(ChurchRuleCriteriaInstance), // placeholder for index 0
             };
 
+            private readonly Dictionary<RuleKey, int> ruleVisibilityInstances = new Dictionary<RuleKey, int>();
+
             public CalendarYear(int year, ChurchCalendar churchCalendar, ChurchCalendarSystem calendarSystem)
             {
                 Year = year;
@@ -59,8 +61,21 @@ namespace LiturgyGeek.Framework.Calendars
 
                 seasonsByDay = new ChurchSeasonInstance[daysInYear + 1];
 
+                AddRuleVisibilityInstances(calendarSystem, churchCalendar);
                 AddEventInstances(calendarSystem, churchCalendar);
                 AddSeasonInstances(calendarSystem, churchCalendar);
+            }
+
+            private void AddRuleVisibilityInstances(ChurchCalendarSystem calendarSystem, ChurchCalendar churchCalendar)
+            {
+                foreach (var group in churchCalendar.RuleGroups)
+                {
+                    foreach (var rule in group.Value.Rules.Where(r => r.Value._VisibilityCriteria != null))
+                    {
+                        ruleVisibilityInstances[new RuleKey(group.Key, rule.Key)] =
+                            AddCriteriaInstance(calendarSystem, Year, rule.Value._VisibilityCriteria!);
+                    }
+                }
             }
 
             private void AddEventInstances(ChurchCalendarSystem calendarSystem, ChurchCalendar churchCalendar)
@@ -165,47 +180,88 @@ namespace LiturgyGeek.Framework.Calendars
                 {
                     foreach (var criteria in criteriaGroup.Value)
                     {
-                        var criteriaInstance = new ChurchRuleCriteriaInstance
-                        {
-                            ruleGroupKey = criteriaGroup.Key,
-                            criteria = criteria,
-                        };
-
-                        criteriaInstance.startDate = criteria.StartDate?.GetInstance(calendarSystem, basisYear);
-                        criteriaInstance.endDate = criteria.EndDate?.GetInstance(calendarSystem, basisYear);
-
-                        if ((criteriaInstance.startDate ?? startDate) <= endDate
-                            && (criteriaInstance.endDate ?? endDate) >= startDate)
-                        {
-                            AddDateInstances(calendarSystem, criteria.IncludeDates, basisYear, startDate, endDate,
-                                out criteriaInstance.includeDatesIndex, out criteriaInstance.includeDatesCount);
-
-                            if (criteria.IncludeDates.Count == 0 || criteriaInstance.includeDatesCount > 0)
-                            {
-                                AddDateInstances(calendarSystem, criteria.ExcludeDates, basisYear, startDate, endDate,
-                                    out criteriaInstance.excludeDatesIndex, out criteriaInstance.excludeDatesCount);
-
-                                criteriaInstance.flags = flags;
-                                if (criteria.StartDate != null
-                                        || criteria.EndDate != null
-                                        || criteria.ExcludeDates.Count > 0)
-                                {
-                                    criteriaInstance.flags |= RuleCriteriaFlags.ExcludeDates;
-                                }
-                                if (criteria.IncludeDates.Count > 0)
-                                    criteriaInstance.flags |= RuleCriteriaFlags.IncludeDates;
-                                if (criteria.IncludeRanks.Count > 0)
-                                    criteriaInstance.flags |= RuleCriteriaFlags.IncludeRanks;
-
-                                criteriaInstances.Add(criteriaInstance);
-                            }
-                        }
+                        AddCriteriaInstance(calendarSystem, flags, basisYear, startDate, endDate,
+                                            criteriaGroup.Key, criteria);
                     }
                 }
                 if (criteriaInstances.Count == startIndex)
                     startIndex = count = 0;
                 else
                     count = criteriaInstances.Count - startIndex;
+            }
+
+            private int AddCriteriaInstance(ChurchCalendarSystem calendarSystem,
+                                                int basisYear,
+                                                GeneralCriteria criteria)
+                => AddCriteriaInstance(calendarSystem, 0, basisYear,
+                                        new DateTime(basisYear, 1, 1), new DateTime(basisYear + 1, 1, 1).AddDays(-1),
+                                        "", criteria);
+
+            private int AddCriteriaInstance(ChurchCalendarSystem calendarSystem,
+                                                RuleCriteriaFlags flags,
+                                                int basisYear,
+                                                DateTime startDate,
+                                                DateTime endDate,
+                                                string ruleGroupKey,
+                                                ChurchRuleCriteria criteria)
+            {
+                bool isGeneral = criteria is GeneralCriteria;
+
+                var criteriaInstance = new ChurchRuleCriteriaInstance
+                {
+                    ruleGroupKey = ruleGroupKey,
+                    criteria = criteria,
+                };
+
+                criteriaInstance.startDate = criteria.StartDate?.GetInstance(calendarSystem, basisYear);
+                criteriaInstance.endDate = criteria.EndDate?.GetInstance(calendarSystem, basisYear);
+
+                if (isGeneral ||
+                    ((criteriaInstance.startDate ?? startDate) <= endDate
+                        && (criteriaInstance.endDate ?? endDate) >= startDate))
+                {
+                    AddDateInstances(calendarSystem, criteria.IncludeDates, basisYear, startDate, endDate,
+                        out criteriaInstance.includeDatesIndex, out criteriaInstance.includeDatesCount);
+                    if (isGeneral)
+                    {
+                        AddDateInstances(calendarSystem, criteria.IncludeDates, basisYear - 1, startDate, endDate,
+                            out _, out int spillForwardCount);
+                        AddDateInstances(calendarSystem, criteria.IncludeDates, basisYear + 1, startDate, endDate,
+                            out _, out int spillBackwardCount);
+                        criteriaInstance.includeDatesCount += spillForwardCount + spillBackwardCount;
+                    }
+
+                    if (isGeneral || criteria.IncludeDates.Count == 0 || criteriaInstance.includeDatesCount > 0)
+                    {
+                        AddDateInstances(calendarSystem, criteria.ExcludeDates, basisYear, startDate, endDate,
+                            out criteriaInstance.excludeDatesIndex, out criteriaInstance.excludeDatesCount);
+                        if (isGeneral)
+                        {
+                            AddDateInstances(calendarSystem, criteria.ExcludeDates, basisYear - 1, startDate, endDate,
+                                out _, out int spillForwardCount);
+                            AddDateInstances(calendarSystem, criteria.ExcludeDates, basisYear + 1, startDate, endDate,
+                                out _, out int spillBackwardCount);
+                            criteriaInstance.excludeDatesCount += spillForwardCount + spillBackwardCount;
+                        }
+
+                        criteriaInstance.flags = flags;
+                        if (criteria.StartDate != null
+                                || criteria.EndDate != null
+                                || criteria.ExcludeDates.Count > 0)
+                        {
+                            criteriaInstance.flags |= RuleCriteriaFlags.ExcludeDates;
+                        }
+                        if (criteria.IncludeDates.Count > 0)
+                            criteriaInstance.flags |= RuleCriteriaFlags.IncludeDates;
+                        if (criteria.IncludeRanks.Count > 0)
+                            criteriaInstance.flags |= RuleCriteriaFlags.IncludeRanks;
+
+                        int result = criteriaInstances.Count;
+                        criteriaInstances.Add(criteriaInstance);
+                        return result;
+                    }
+                }
+                return 0;
             }
 
             private void AddDateInstances(ChurchCalendarSystem calendarSystem,
@@ -233,6 +289,13 @@ namespace LiturgyGeek.Framework.Calendars
                     count = dateInstances.Count - startIndex;
                 else
                     startIndex = count = 0;
+            }
+
+            public ChurchRuleCriteriaInstance? GetRuleVisibility(string group, string rule)
+            {
+                return ruleVisibilityInstances.TryGetValue(new RuleKey(group, rule), out int index)
+                        ? criteriaInstances[index]
+                        : null;
             }
 
             public ChurchEventInstance[] GetEventInstances(DateTime date)
@@ -365,6 +428,19 @@ namespace LiturgyGeek.Framework.Calendars
                     return Enumerable.Range(ruleCriteriaIndex, ruleCriteriaCount)
                             .Select(i => calendarYear.criteriaInstances[i])
                             .Where(c => c.MeetsCriteria(calendarYear, date, events));
+                }
+            }
+
+            public struct RuleKey
+            {
+                public string Group { get; private init; }
+
+                public string Rule { get; private init; }
+
+                public RuleKey(string group, string rule)
+                {
+                    Group = group;
+                    Rule = rule;
                 }
             }
         }

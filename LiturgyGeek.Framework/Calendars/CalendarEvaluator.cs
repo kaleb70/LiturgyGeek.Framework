@@ -93,6 +93,9 @@ namespace LiturgyGeek.Framework.Calendars
                                         r.criteria.RuleKey,
                                         ruleGroup.Rules[r.criteria.RuleKey]
                                     ),
+                                    Show = calendarYear.GetRuleVisibility(r.ruleGroupKey, r.criteria.RuleKey)
+                                                ?.MeetsCriteria(calendarYear, d, eventInstances)
+                                            ?? true,
                                 };
                             })
                             .ToArray();

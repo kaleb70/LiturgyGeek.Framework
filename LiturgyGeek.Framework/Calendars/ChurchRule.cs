@@ -11,9 +11,7 @@ namespace LiturgyGeek.Framework.Calendars
 {
     public class ChurchRule : Clcs.Model.ChurchRule, ICloneable<ChurchRule>
     {
-        public List<ChurchDate> _VisibilityIncludeDates = new List<ChurchDate>();
-
-        public List<ChurchDate> _VisibilityExcludeDates = new List<ChurchDate>();
+        public GeneralCriteria? _VisibilityCriteria { get; set; }
 
         [JsonConstructor]
         public ChurchRule(string summary)
@@ -24,8 +22,7 @@ namespace LiturgyGeek.Framework.Calendars
         public ChurchRule(ChurchRule other)
             : this(other.Summary)
         {
-            _VisibilityIncludeDates.AddRange(other._VisibilityIncludeDates);
-            _VisibilityExcludeDates.AddRange(other._VisibilityExcludeDates);
+            _VisibilityCriteria = other._VisibilityCriteria?.Clone();
         }
 
         public ChurchRule Clone() => new ChurchRule(this);

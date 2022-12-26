@@ -11,5 +11,7 @@ namespace LiturgyGeek.Framework.Calendars
         public KeyValuePair<string, ChurchRuleGroup> RuleGroup { get; set; }
 
         public KeyValuePair<string, ChurchRule> Rule { get; set; }
+
+        public bool Show { get; set; }
     }
 }

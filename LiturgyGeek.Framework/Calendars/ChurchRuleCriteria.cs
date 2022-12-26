@@ -27,7 +27,7 @@ namespace LiturgyGeek.Framework.Calendars
         {
         }
 
-        public ChurchRuleCriteria Clone() => new ChurchRuleCriteria(this);
+        public virtual ChurchRuleCriteria Clone() => new ChurchRuleCriteria(this);
 
         object ICloneable.Clone() => Clone();
     }
