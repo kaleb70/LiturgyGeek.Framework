@@ -17,7 +17,10 @@ namespace LiturgyGeek.Framework.Calendars
         {
             public int Year { get; init; }
 
-            private readonly List<ChurchEventInstance> eventInstances = new List<ChurchEventInstance>();
+            private readonly List<ChurchEventInstance> eventInstances = new List<ChurchEventInstance>
+            {
+                default(ChurchEventInstance) // placeholder for index 0
+            };
 
             private readonly int[] fixedEventsByDay;
 
@@ -27,13 +30,22 @@ namespace LiturgyGeek.Framework.Calendars
 
             private readonly int[][] eventSources;
 
-            private readonly List<ChurchSeasonInstance> seasonInstances = new List<ChurchSeasonInstance>();
+            private readonly List<ChurchSeasonInstance> seasonInstances = new List<ChurchSeasonInstance>
+            {
+                default(ChurchSeasonInstance), // placeholder for index 0
+            };
 
             private readonly ChurchSeasonInstance[] seasonsByDay;
 
-            private readonly List<DateTime> dateInstances = new List<DateTime>();
+            private readonly List<DateTime> dateInstances = new List<DateTime>
+            {
+                default(DateTime), // placeholder for index 0
+            };
 
-            private readonly List<ChurchRuleCriteriaInstance> criteriaInstances = new List<ChurchRuleCriteriaInstance>();
+            private readonly List<ChurchRuleCriteriaInstance> criteriaInstances = new List<ChurchRuleCriteriaInstance>
+            {
+                default(ChurchRuleCriteriaInstance), // placeholder for index 0
+            };
 
             public CalendarYear(int year, ChurchCalendar churchCalendar, ChurchCalendarSystem calendarSystem)
             {
@@ -76,7 +88,8 @@ namespace LiturgyGeek.Framework.Calendars
                                         churchEvent = churchEvent,
                                     };
 
-                                    AddCriteriaInstances(calendarSystem, churchEvent.RuleCriteria, basisYear,
+                                    AddCriteriaInstances(calendarSystem, RuleCriteriaFlags.Event,
+                                                            churchEvent.RuleCriteria, basisYear,
                                                             instanceDate.Value, instanceDate.Value,
                                                             out eventInstance.ruleCriteriaIndex,
                                                             out eventInstance.ruleCriteriaCount);
@@ -111,7 +124,8 @@ namespace LiturgyGeek.Framework.Calendars
                                 season = season,
                             };
 
-                            AddCriteriaInstances(calendarSystem, season.RuleCriteria, basisYear,
+                            AddCriteriaInstances(calendarSystem, RuleCriteriaFlags.Season,
+                                                    season.RuleCriteria, basisYear,
                                                     seasonInstance.startDate, seasonInstance.endDate,
                                                     out seasonInstance.ruleCriteriaIndex,
                                                     out seasonInstance.ruleCriteriaCount);
@@ -121,6 +135,7 @@ namespace LiturgyGeek.Framework.Calendars
                     }
 
                     foreach (var seasonInstance in seasonInstances
+                                                    .Skip(1)
                                                     .OrderByDescending(s => s.season.IsDefault)
                                                     .ThenByDescending(s => s.DaysInSeason))
                     {
@@ -137,6 +152,7 @@ namespace LiturgyGeek.Framework.Calendars
             }
 
             private void AddCriteriaInstances(ChurchCalendarSystem calendarSystem,
+                                                RuleCriteriaFlags flags,
                                                 IDictionary<string, ChurchRuleCriteria[]> criteriaGroups,
                                                 int basisYear,
                                                 DateTime startDate,
@@ -158,11 +174,32 @@ namespace LiturgyGeek.Framework.Calendars
                         criteriaInstance.startDate = criteria.StartDate?.GetInstance(calendarSystem, basisYear);
                         criteriaInstance.endDate = criteria.EndDate?.GetInstance(calendarSystem, basisYear);
 
-                        AddDateInstances(calendarSystem, criteria.IncludeDates, basisYear, startDate, endDate,
-                            out criteriaInstance.includeDatesIndex, out criteriaInstance.includeDatesCount);
+                        if ((criteriaInstance.startDate ?? startDate) <= endDate
+                            && (criteriaInstance.endDate ?? endDate) >= startDate)
+                        {
+                            AddDateInstances(calendarSystem, criteria.IncludeDates, basisYear, startDate, endDate,
+                                out criteriaInstance.includeDatesIndex, out criteriaInstance.includeDatesCount);
 
-                        AddDateInstances(calendarSystem, criteria.ExcludeDates, basisYear, startDate, endDate,
-                            out criteriaInstance.excludeDatesIndex, out criteriaInstance.excludeDatesCount);
+                            if (criteria.IncludeDates.Count == 0 || criteriaInstance.includeDatesCount > 0)
+                            {
+                                AddDateInstances(calendarSystem, criteria.ExcludeDates, basisYear, startDate, endDate,
+                                    out criteriaInstance.excludeDatesIndex, out criteriaInstance.excludeDatesCount);
+
+                                criteriaInstance.flags = flags;
+                                if (criteria.StartDate != null
+                                        || criteria.EndDate != null
+                                        || criteria.ExcludeDates.Count > 0)
+                                {
+                                    criteriaInstance.flags |= RuleCriteriaFlags.ExcludeDates;
+                                }
+                                if (criteria.IncludeDates.Count > 0)
+                                    criteriaInstance.flags |= RuleCriteriaFlags.IncludeDates;
+                                if (criteria.IncludeRanks.Count > 0)
+                                    criteriaInstance.flags |= RuleCriteriaFlags.IncludeRanks;
+
+                                criteriaInstances.Add(criteriaInstance);
+                            }
+                        }
                     }
                 }
                 if (criteriaInstances.Count == startIndex)
@@ -198,12 +235,12 @@ namespace LiturgyGeek.Framework.Calendars
                     startIndex = count = 0;
             }
 
-            public ChurchEvent[] GetEvents(DateTime date)
+            public ChurchEventInstance[] GetEventInstances(DateTime date)
             {
                 if (date.Year != Year)
                     throw new ArgumentOutOfRangeException(nameof(date));
 
-                var result = new ChurchEvent[eventCountsByDay[date.DayOfYear]];
+                var result = new ChurchEventInstance[eventCountsByDay[date.DayOfYear]];
                 int resultIndex = 0;
 
                 foreach (var source in eventSources)
@@ -212,7 +249,7 @@ namespace LiturgyGeek.Framework.Calendars
                     while (instanceIndex != 0)
                     {
                         var instance = eventInstances[instanceIndex];
-                        result[resultIndex++] = instance.churchEvent;
+                        result[resultIndex++] = instance;
                         instanceIndex = instance.nextEventInstance;
                     }
                 }
@@ -220,14 +257,14 @@ namespace LiturgyGeek.Framework.Calendars
                 return result;
             }
 
-            public ChurchSeason GetSeason(DateTime date)
+            public ChurchSeasonInstance GetSeasonInstance(DateTime date)
             {
                 return date.Year == Year
-                        ? seasonsByDay[date.DayOfYear].season
+                        ? seasonsByDay[date.DayOfYear]
                         : throw new ArgumentOutOfRangeException(nameof(date));
             }
 
-            private struct ChurchRuleCriteriaInstance
+            public struct ChurchRuleCriteriaInstance
             {
                 public string ruleGroupKey;
 
@@ -244,9 +281,44 @@ namespace LiturgyGeek.Framework.Calendars
                 public int excludeDatesCount;
 
                 public ChurchRuleCriteria criteria;
+
+                public RuleCriteriaFlags flags;
+
+                public bool MeetsCriteria(CalendarYear calendarYear, DateTime date, IEnumerable<ChurchEventInstance> events)
+                {
+                    if (startDate.HasValue && startDate > date)
+                        return false;
+
+                    if (endDate.HasValue && endDate < date)
+                        return false;
+
+                    if (includeDatesCount > 0
+                            && !Enumerable.Range(includeDatesIndex, includeDatesCount)
+                                            .Any(i => calendarYear.dateInstances[i] == date))
+                    {
+                        return false;
+                    }
+
+                    if (criteria.IncludeRanks.Count > 0
+                            && !criteria.IncludeRanks
+                                .Intersect(events.Select(e => e.churchEvent.EventRankKey))
+                                .Any())
+                    {
+                        return false;
+                    }
+
+                    if (excludeDatesCount > 0
+                            && Enumerable.Range(excludeDatesIndex, excludeDatesCount)
+                                            .Any(i => calendarYear.dateInstances[i] == date))
+                    {
+                        return false;
+                    }
+
+                    return true;
+                }
             }
 
-            private struct ChurchEventInstance
+            public struct ChurchEventInstance
             {
                 public int nextEventInstance;
 
@@ -255,9 +327,21 @@ namespace LiturgyGeek.Framework.Calendars
                 public int ruleCriteriaCount;
 
                 public ChurchEvent churchEvent;
+
+                public IEnumerable<ChurchRuleCriteriaInstance> GetRules
+                    (
+                        CalendarYear calendarYear,
+                        DateTime date,
+                        IEnumerable<ChurchEventInstance> events
+                    )
+                {
+                    return Enumerable.Range(ruleCriteriaIndex, ruleCriteriaCount)
+                            .Select(i => calendarYear.criteriaInstances[i])
+                            .Where(c => c.MeetsCriteria(calendarYear, date, events));
+                }
             }
 
-            private struct ChurchSeasonInstance
+            public struct ChurchSeasonInstance
             {
                 public DateTime startDate;
 
@@ -270,6 +354,18 @@ namespace LiturgyGeek.Framework.Calendars
                 public int ruleCriteriaCount;
 
                 public ChurchSeason season;
+
+                public IEnumerable<ChurchRuleCriteriaInstance> GetRules
+                    (
+                        CalendarYear calendarYear,
+                        DateTime date,
+                        IEnumerable<ChurchEventInstance> events
+                    )
+                {
+                    return Enumerable.Range(ruleCriteriaIndex, ruleCriteriaCount)
+                            .Select(i => calendarYear.criteriaInstances[i])
+                            .Where(c => c.MeetsCriteria(calendarYear, date, events));
+                }
             }
         }
     }

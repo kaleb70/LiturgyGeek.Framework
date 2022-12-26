@@ -5,10 +5,19 @@
   "paschalReckoning": "julian",
   "ruleGroups": {
     "fast": {
+      "_monthViewHeadline": true,
       "rules": {
         "fast.strict": {
           "summary": "Fast",
           "elaboration": "Strict Fast"
+        },
+        "fast.oil": {
+          "summary": "Fast (oil/wine)",
+          "elaboration": "Oil and Wine Permitted"
+        },
+        "fast.fish": {
+          "summary": "Fast (fish)",
+          "elaboration": "Fish, Oil, and Wine Permitted"
         },
         "fast.none": {
           "summary": "No Fast"
@@ -66,7 +75,19 @@
     {
       "occasionKey": "holy.cross",
       "dates": [ "9/14" ],
-      "eventRankKey": "great.feast"
+      "eventRankKey": "great.feast",
+      "ruleCriteria": {
+        "fast": [
+          {
+            "ruleKey": "fast.strict",
+            "excludeDates": [ "Sunday", "Saturday" ]
+          },
+          {
+            "ruleKey": "fast.oil",
+            "includeDates": [ "Sunday", "Saturday" ]
+          }
+        ]
+      }
     }
   ]
 }

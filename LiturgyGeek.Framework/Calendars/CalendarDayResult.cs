@@ -6,20 +6,22 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class CalendarDay
+    public class CalendarDayResult
     {
         public DateTime Date { get; set; }
 
         public ChurchSeason Season { get; set; }
 
-        public Dictionary<string, ChurchRule> Rules { get; set; } = new Dictionary<string, ChurchRule>();
+        public ChurchRuleResult[] Rules { get; set; }
 
-        public List<ChurchEvent> Events { get; set; } = new List<ChurchEvent>();
+        public ChurchEvent[] Events { get; set; }
 
-        public CalendarDay(DateTime date, ChurchSeason season)
+        public CalendarDayResult(DateTime date, ChurchSeason season, ChurchRuleResult[] rules, ChurchEvent[] events)
         {
             Date = date;
             Season = season;
+            Rules = rules;
+            Events = events;
         }
     }
 }

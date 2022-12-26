@@ -19,7 +19,27 @@ namespace LiturgyGeek.Framework.Test.Calendars
 
             var result = evaluator.Evaluate("DummyCalendar", new DateTime(2022, 8, 28), new DateTime(2022, 10, 2));
             Assert.AreEqual(35, result.Length);
-            Assert.AreEqual(1, result.Count(e => e.Events.Count > 0));
+            Assert.AreEqual(1, result.Count(e => e.Events.Length > 0));
+
+            Assert.AreEqual(1, result[17].Events.Length);
+            Assert.IsTrue(result[17].Events[0]._MonthViewContent);
+        }
+
+        [TestMethod]
+        public void TestHolyCross()
+        {
+            var provider = new CalendarProvider();
+            var evaluator = new CalendarEvaluator(provider);
+
+            var result = evaluator.Evaluate("DummyCalendar", new DateTime(2022, 9, 14), new DateTime(2022, 9, 15));
+            Assert.AreEqual(1, result.Length);
+            Assert.AreEqual(1, result[0].Events.Length);
+            Assert.IsTrue(result[0].Events[0]._MonthViewContent);
+
+            Assert.AreEqual(1, result[0].Rules.Length);
+            Assert.AreEqual("fast.strict", result[0].Rules[0].Rule.Key);
+            Assert.IsTrue(result[0].Rules[0].RuleGroup.Value._MonthViewHeadline);
+            Assert.IsFalse(result[0].Rules[0].RuleGroup.Value._MonthViewContent);
         }
 
         public class CalendarProvider : IChurchCalendarProvider

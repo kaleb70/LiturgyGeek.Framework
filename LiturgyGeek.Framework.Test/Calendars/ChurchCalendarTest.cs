@@ -29,8 +29,10 @@ namespace LiturgyGeek.Framework.Test.Calendars
 
                 Assert.AreEqual(2, calendar.RuleGroups.Count);
 
-                VerifyRuleGroup(calendar.RuleGroups["fast"], 2);
+                VerifyRuleGroup(calendar.RuleGroups["fast"], 4);
                 VerifyRule(calendar.RuleGroups["fast"].Rules["fast.strict"], "Fast", "Strict Fast");
+                VerifyRule(calendar.RuleGroups["fast"].Rules["fast.oil"], "Fast (oil/wine)", "Oil and Wine Permitted");
+                VerifyRule(calendar.RuleGroups["fast"].Rules["fast.fish"], "Fast (fish)", "Fish, Oil, and Wine Permitted");
                 VerifyRule(calendar.RuleGroups["fast"].Rules["fast.none"], "No Fast", null);
 
                 VerifyRuleGroup(calendar.RuleGroups["colors"], 1);

@@ -45,7 +45,7 @@ namespace LiturgyGeek.Framework.Calendars
             var result = Clone();
 
             foreach (var churchEvent in result.Events)
-                churchEvent.Merge(this, provider);
+                churchEvent.Merge(result, provider);
 
             return result;
         }

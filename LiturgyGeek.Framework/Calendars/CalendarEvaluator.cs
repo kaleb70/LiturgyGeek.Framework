@@ -53,7 +53,7 @@ namespace LiturgyGeek.Framework.Calendars
                     : calendars[calendarKey] = calendarProvider.GetCalendar(calendarKey).CloneAndMerge(calendarProvider);
         }
 
-        public CalendarDay[] Evaluate(string calendarKey, DateTime minDate, DateTime maxDate)
+        public CalendarDayResult[] Evaluate(string calendarKey, DateTime minDate, DateTime maxDate)
         {
             minDate = minDate.Date;
             maxDate = maxDate.Date;
@@ -67,13 +67,54 @@ namespace LiturgyGeek.Framework.Calendars
                                 {
                                     if (calendarYear.Year != d.Year)
                                         calendarYear = new CalendarYear(d.Year, churchCalendar, calendarSystem);
-                                    return d;
-                                })
-                                .Select(d => new CalendarDay(d, calendarYear.GetSeason(d))
-                                {
-                                    Events = calendarYear.GetEvents(d).ToList(),
+                                    return EvaluateDay(churchCalendar, calendarYear, d);
                                 })
                                 .ToArray();
         }
+
+        private static CalendarDayResult EvaluateDay(ChurchCalendar churchCalendar, CalendarYear calendarYear, DateTime d)
+        {
+            var seasonInstance = calendarYear.GetSeasonInstance(d);
+            CalendarYear.ChurchEventInstance[] eventInstances = calendarYear.GetEventInstances(d);
+            var ruleInstances = seasonInstance.GetRules(calendarYear, d, eventInstances)
+                                .Concat(eventInstances.SelectMany(e => e.GetRules(calendarYear, d, eventInstances)))
+                .ToArray();
+
+            var rules = ruleInstances.GroupBy(r => r.ruleGroupKey)
+                            .Select(rg => rg.OrderByDescending(c => c.flags).First())
+                            .Select(r =>
+                            {
+                                var ruleGroup = churchCalendar.RuleGroups[r.ruleGroupKey];
+                                return new ChurchRuleResult
+                                {
+                                    RuleGroup = new KeyValuePair<string, ChurchRuleGroup>(r.ruleGroupKey, ruleGroup),
+                                    Rule = new KeyValuePair<string, ChurchRule>
+                                    (
+                                        r.criteria.RuleKey,
+                                        ruleGroup.Rules[r.criteria.RuleKey]
+                                    ),
+                                };
+                            })
+                            .ToArray();
+
+            ChurchEvent[] events = eventInstances.Select(e => e.churchEvent).ToArray();
+
+            var result = new CalendarDayResult(d, seasonInstance.season, rules, events);
+
+            return result;
+        }
+
+        [Flags]
+        public enum RuleCriteriaFlags
+        {
+            None = 0,
+
+            ExcludeDates    = 0b0000_0001,
+            IncludeDates    = 0b0000_0010,
+            IncludeRanks    = 0b0000_0100,
+            Season          = 0b0000_1000,
+            Event           = 0b0001_0000,
+        }
+
     }
 }
