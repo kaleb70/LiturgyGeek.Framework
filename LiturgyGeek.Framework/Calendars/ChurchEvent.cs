@@ -36,6 +36,8 @@ namespace LiturgyGeek.Framework.Calendars
             LongName = other.LongName;
             EventRankKey = other.EventRankKey;
             RuleCriteria = other.RuleCriteria.Clone();
+            _MonthViewHeadline = other._MonthViewHeadline;
+            _MonthViewContent = other._MonthViewContent;
         }
 
         public static ChurchEvent ByOccasion(string occasionKey, string dates, string? name = default, string? shortName = default, string? eventRankKey = default)

@@ -40,6 +40,9 @@
     "vigil": {
       "precedence": 3,
       "_monthViewContent": true
+    },
+    "ordinary": {
+      "precedence": 99
     }
   },
   "seasons": {
@@ -88,6 +91,12 @@
           }
         ]
       }
+    },
+    {
+      "occasionKey": "basilGreat",
+      "dates": [ "1/1" ],
+      "eventRankKey": "ordinary",
+      "_monthViewContent": true
     }
   ]
 }

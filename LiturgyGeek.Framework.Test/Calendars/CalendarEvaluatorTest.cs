@@ -42,6 +42,18 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.IsFalse(result[0].Rules[0].RuleGroup.Value._MonthViewContent);
         }
 
+        [TestMethod]
+        public void TestBasilTheGreat()
+        {
+            var provider = new CalendarProvider();
+            var evaluator = new CalendarEvaluator(provider);
+
+            var result = evaluator.Evaluate("DummyCalendar", new DateTime(2022, 1, 1), new DateTime(2022, 1, 2));
+            Assert.AreEqual(1, result.Length);
+            Assert.AreEqual(1, result[0].Events.Length);
+            Assert.IsTrue(result[0].Events[0]._MonthViewContent);
+        }
+
         public class CalendarProvider : IChurchCalendarProvider
         {
             public ChurchCalendar GetCalendar(string calendarKey)

@@ -38,9 +38,10 @@ namespace LiturgyGeek.Framework.Test.Calendars
                 VerifyRuleGroup(calendar.RuleGroups["colors"], 1);
                 VerifyRule(calendar.RuleGroups["colors"].Rules["colors.green"], "Green", null);
 
-                Assert.AreEqual(2, calendar.EventRanks.Count);
+                Assert.AreEqual(3, calendar.EventRanks.Count);
                 VerifyEventRank(calendar.EventRanks["great.feast"], 1, false, true);
                 VerifyEventRank(calendar.EventRanks["vigil"], 3, false, true);
+                VerifyEventRank(calendar.EventRanks["ordinary"], 99, false, false);
 
                 Assert.AreEqual(2, calendar.Seasons.Count);
 
@@ -56,9 +57,10 @@ namespace LiturgyGeek.Framework.Test.Calendars
 
                 VerifySeason(calendar.Seasons["advent"], "11/15", "12/24", false, 0);
 
-                Assert.AreEqual(2, calendar.Events.Count);
-                VerifyEvent(calendar.Events[0], "pascha", new ChurchDate[] { "1/Sunday" }, null, null, "great.feast");
-                VerifyEvent(calendar.Events[1], "holy.cross", new ChurchDate[] { "9/14" }, null, null, "great.feast");
+                Assert.AreEqual(3, calendar.Events.Count);
+                VerifyEvent(calendar.Events[0], "pascha", new ChurchDate[] { "1/Sunday" }, null, null, "great.feast", null, null);
+                VerifyEvent(calendar.Events[1], "holy.cross", new ChurchDate[] { "9/14" }, null, null, "great.feast", null, null);
+                VerifyEvent(calendar.Events[2], "basilGreat", new ChurchDate[] { "1/1" }, null, null, "ordinary", null, true);
             }
         }
 
@@ -104,13 +106,15 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreEqual(ruleCriteriaCount, season.RuleCriteria.Count);
         }
 
-        private void VerifyEvent(ChurchEvent churchEvent, string occasionKey, ChurchDate[] dates, string? name, string? longName, string? eventRankKey)
+        private void VerifyEvent(ChurchEvent churchEvent, string occasionKey, ChurchDate[] dates, string? name, string? longName, string? eventRankKey, bool? monthViewHeadline, bool? monthViewContent)
         {
             Assert.AreEqual(occasionKey, churchEvent.OccasionKey);
             CollectionAssert.AreEqual(dates, churchEvent.Dates);
             Assert.AreEqual(name, churchEvent.Name);
             Assert.AreEqual(longName, churchEvent.LongName);
             Assert.AreEqual(eventRankKey, churchEvent.EventRankKey);
+            Assert.AreEqual(monthViewHeadline, churchEvent._MonthViewHeadline);
+            Assert.AreEqual(monthViewContent, churchEvent._MonthViewContent);
         }
 
         [TestMethod]
