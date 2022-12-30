@@ -21,7 +21,7 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public string? EventRankKey { get; set; }
 
-        public List<string> CustomFlags { get; set; } = new List<string>();
+        public HashSet<string> CustomFlags { get; set; } = new HashSet<string>();
 
         public Dictionary<string, TRuleCriteria[]> RuleCriteria { get; set; } = new Dictionary<string, TRuleCriteria[]>();
 
