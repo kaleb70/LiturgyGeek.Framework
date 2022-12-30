@@ -22,6 +22,7 @@ namespace LiturgyGeek.Framework.Calendars
         public ChurchEventRank(ChurchEventRank other)
         {
             Precedence = other.Precedence;
+            CustomFlags.AddRange(other.CustomFlags);
             _MonthViewHeadline = other._MonthViewHeadline;
             _MonthViewContent = other._MonthViewContent;
         }

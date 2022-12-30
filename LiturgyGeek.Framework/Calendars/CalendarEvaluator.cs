@@ -112,11 +112,13 @@ namespace LiturgyGeek.Framework.Calendars
         {
             None = 0,
 
-            ExcludeDates    = 0b0000_0001,
-            IncludeDates    = 0b0000_0010,
-            IncludeRanks    = 0b0000_0100,
-            Season          = 0b0000_1000,
-            Event           = 0b0001_0000,
+            ExcludeDates        = 0b0000_0001,
+            ExcludeCustomFlags  = 0b0000_0010,
+            IncludeDates        = 0b0000_0100,
+            IncludeRanks        = 0b0000_1000,
+            IncludeCustomFlags  = 0b0001_0000,
+            Season              = 0b0010_0000,
+            Event               = 0b0100_0000,
         }
 
     }

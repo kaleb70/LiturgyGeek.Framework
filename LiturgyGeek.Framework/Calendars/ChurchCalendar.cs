@@ -10,7 +10,7 @@ using ChurchRuleCriteria = LiturgyGeek.Framework.Clcs.Model.ChurchRuleCriteria;
 
 namespace LiturgyGeek.Framework.Calendars
 {
-    public class ChurchCalendar : Clcs.Model.ChurchCalendar<ChurchRule, ChurchRuleGroup, ChurchRuleCriteria, ChurchEventRank, ChurchSeason, ChurchEvent>, ICloneable<ChurchCalendar>
+    public class ChurchCalendar : Clcs.Model.ChurchCalendar<ChurchRule, ChurchRuleGroup, CustomFlagBehavior, ChurchRuleCriteria, ChurchEventRank, ChurchSeason, ChurchEvent>, ICloneable<ChurchCalendar>
     {
         [JsonConstructor]
         public ChurchCalendar(string name, string traditionKey)
@@ -32,6 +32,7 @@ namespace LiturgyGeek.Framework.Calendars
             PaschalReckoning = other.PaschalReckoning;
             RuleGroups = other.RuleGroups.Clone();
             EventRanks = other.EventRanks.Clone();
+            CustomFlagBehaviors = other.CustomFlagBehaviors.Clone();
             Seasons = other.Seasons.Clone();
             Events = other.Events.Clone();
         }

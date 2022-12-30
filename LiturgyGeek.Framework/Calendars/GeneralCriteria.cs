@@ -15,15 +15,19 @@ namespace LiturgyGeek.Framework.Calendars
 
         [JsonConstructor]
         public GeneralCriteria(ChurchDate? startDate, ChurchDate? endDate,
+                                IReadOnlyList<string>? includeCustomFlags,
                                 IReadOnlyList<ChurchDate>? includeDates,
                                 IReadOnlyList<string>? includeRanks,
+                                IReadOnlyList<string>? excludeCustomFlags,
                                 IReadOnlyList<ChurchDate>? excludeDates)
-            : base("", startDate, endDate, includeDates, includeRanks, excludeDates)
+            : base("", startDate, endDate, includeCustomFlags, includeDates, includeRanks, excludeCustomFlags, excludeDates)
         {
         }
 
         public GeneralCriteria(GeneralCriteria other)
-            : this(other.StartDate, other.EndDate, other.IncludeDates, other.IncludeRanks, other.ExcludeDates)
+            : this(other.StartDate, other.EndDate,
+                  other.IncludeCustomFlags, other.IncludeDates, other.IncludeRanks,
+                  other.ExcludeCustomFlags, other.ExcludeDates)
         {
         }
 

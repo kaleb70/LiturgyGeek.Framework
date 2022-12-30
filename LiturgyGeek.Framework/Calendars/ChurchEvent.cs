@@ -35,6 +35,7 @@ namespace LiturgyGeek.Framework.Calendars
             Dates.AddRange(other.Dates);
             LongName = other.LongName;
             EventRankKey = other.EventRankKey;
+            CustomFlags.AddRange(other.CustomFlags);
             RuleCriteria = other.RuleCriteria.Clone();
             _MonthViewHeadline = other._MonthViewHeadline;
             _MonthViewContent = other._MonthViewContent;
@@ -56,14 +57,29 @@ namespace LiturgyGeek.Framework.Calendars
             if (OccasionKey != null && (Name == null || LongName == null))
                 provider.GetCommon().Occasions.TryGetValue(OccasionKey, out occasion);
 
-            if (_MonthViewHeadline.HasValue || _MonthViewContent.HasValue || EventRankKey == null)
+            ChurchEventRank? eventRank;
+            if (EventRankKey == null || !calendar.EventRanks.TryGetValue(EventRankKey, out eventRank))
+                eventRank = null;
+
+            if (eventRank != null)
+                CustomFlags.AddRange(eventRank.CustomFlags);
+
+            foreach (var customFlag in CustomFlags.AsEnumerable())
+            {
+                if (calendar.CustomFlagBehaviors.TryGetValue(customFlag, out var behavior))
+                {
+                    _MonthViewHeadline ??= behavior._MonthViewHeadline;
+                    _MonthViewContent ??= behavior._MonthViewContent;
+                }
+            }
+
+            if (_MonthViewHeadline.HasValue || _MonthViewContent.HasValue || eventRank == null)
             {
                 _MonthViewHeadline ??= false;
                 _MonthViewContent ??= false;
             }
             else
             {
-                var eventRank = calendar.EventRanks[EventRankKey];
                 _MonthViewHeadline = eventRank._MonthViewHeadline;
                 _MonthViewContent = eventRank._MonthViewContent;
             }

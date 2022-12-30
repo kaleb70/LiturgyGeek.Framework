@@ -245,16 +245,22 @@ namespace LiturgyGeek.Framework.Calendars
                         }
 
                         criteriaInstance.flags = flags;
+
                         if (criteria.StartDate != null
                                 || criteria.EndDate != null
                                 || criteria.ExcludeDates.Count > 0)
                         {
                             criteriaInstance.flags |= RuleCriteriaFlags.ExcludeDates;
                         }
+                        if (criteria.ExcludeCustomFlags.Count > 0)
+                            criteriaInstance.flags |= RuleCriteriaFlags.ExcludeCustomFlags;
+
                         if (criteria.IncludeDates.Count > 0)
                             criteriaInstance.flags |= RuleCriteriaFlags.IncludeDates;
                         if (criteria.IncludeRanks.Count > 0)
                             criteriaInstance.flags |= RuleCriteriaFlags.IncludeRanks;
+                        if (criteria.IncludeCustomFlags.Count > 0)
+                            criteriaInstance.flags |= RuleCriteriaFlags.IncludeCustomFlags;
 
                         int result = criteriaInstances.Count;
                         criteriaInstances.Add(criteriaInstance);
@@ -370,9 +376,23 @@ namespace LiturgyGeek.Framework.Calendars
                         return false;
                     }
 
+                    if (criteria.IncludeCustomFlags.Count > 0
+                            && !criteria.IncludeCustomFlags
+                                .Intersect(events.SelectMany(e => e.churchEvent.CustomFlags))
+                                .Any())
+                    {
+                        return false;
+                    }
                     if (excludeDatesCount > 0
                             && Enumerable.Range(excludeDatesIndex, excludeDatesCount)
                                             .Any(i => calendarYear.dateInstances[i] == date))
+                    {
+                        return false;
+                    }
+                    if (criteria.ExcludeCustomFlags.Count > 0
+                            && criteria.ExcludeCustomFlags
+                                .Intersect(events.SelectMany(e => e.churchEvent.CustomFlags))
+                                .Any())
                     {
                         return false;
                     }

@@ -15,15 +15,19 @@ namespace LiturgyGeek.Framework.Calendars
         public ChurchRuleCriteria(string ruleKey,
                                     ChurchDate? startDate,
                                     ChurchDate? endDate,
+                                    IReadOnlyList<string>? includeCustomFlags,
                                     IReadOnlyList<ChurchDate>? includeDates,
                                     IReadOnlyList<string>? includeRanks,
+                                    IReadOnlyList<string>? excludeCustomFlags,
                                     IReadOnlyList<ChurchDate>? excludeDates)
-            : base(ruleKey, startDate, endDate, includeDates, includeRanks, excludeDates)
+            : base(ruleKey, startDate, endDate, includeCustomFlags, includeDates, includeRanks, excludeCustomFlags, excludeDates)
         {
         }
 
         public ChurchRuleCriteria(ChurchRuleCriteria other)
-            : this(other.RuleKey, other.StartDate, other.EndDate, other.IncludeDates, other.IncludeRanks, other.ExcludeDates)
+            : this(other.RuleKey, other.StartDate, other.EndDate,
+                  other.IncludeCustomFlags, other.IncludeDates, other.IncludeRanks,
+                  other.ExcludeCustomFlags, other.ExcludeDates)
         {
         }
 

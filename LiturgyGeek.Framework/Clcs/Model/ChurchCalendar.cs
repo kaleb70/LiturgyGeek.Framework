@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace LiturgyGeek.Framework.Clcs.Model
 {
-    public class ChurchCalendar<TRule, TRuleGroup, TRuleCriteria, TEventRank, TSeason, TEvent>
+    public class ChurchCalendar<TRule, TRuleGroup, TCustomFlagBehavior, TRuleCriteria, TEventRank, TSeason, TEvent>
         where TRule : ChurchRule
         where TRuleGroup : ChurchRuleGroup<TRule>
+        where TCustomFlagBehavior : CustomFlagBehavior
         where TRuleCriteria : ChurchRuleCriteria
         where TEventRank : ChurchEventRank
         where TSeason : ChurchSeason<TRuleCriteria>
@@ -28,6 +29,9 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public Dictionary<string, TEventRank> EventRanks { get; set; } = new Dictionary<string, TEventRank>();
 
+        public Dictionary<string, TCustomFlagBehavior> CustomFlagBehaviors { get; set; }
+            = new Dictionary<string, TCustomFlagBehavior>();
+
         public Dictionary<string, TSeason> Seasons { get; set; } = new Dictionary<string, TSeason>();
 
         public List<TEvent> Events { get; set; } = new List<TEvent>();
@@ -39,7 +43,7 @@ namespace LiturgyGeek.Framework.Clcs.Model
         }
     }
 
-    public class ChurchCalendar : ChurchCalendar<ChurchRule, ChurchRuleGroup, ChurchRuleCriteria, ChurchEventRank, ChurchSeason, ChurchEvent>
+    public class ChurchCalendar : ChurchCalendar<ChurchRule, ChurchRuleGroup, CustomFlagBehavior, ChurchRuleCriteria, ChurchEventRank, ChurchSeason, ChurchEvent>
     {
         [JsonConstructor]
         public ChurchCalendar(string name, string traditionKey)

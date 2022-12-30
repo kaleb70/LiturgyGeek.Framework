@@ -11,6 +11,8 @@ namespace LiturgyGeek.Framework.Clcs.Model
     {
         public int Precedence { get; set; }
 
+        public List<string> CustomFlags { get; set; } = new List<string>();
+
         [JsonConstructor]
         public ChurchEventRank()
         {
