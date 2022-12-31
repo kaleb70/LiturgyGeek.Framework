@@ -22,6 +22,7 @@ namespace LiturgyGeek.Framework.Calendars
         public ChurchRule(ChurchRule other)
             : this(other.Summary)
         {
+            Elaboration = other.Elaboration;
             _VisibilityCriteria = other._VisibilityCriteria?.Clone();
         }
 
