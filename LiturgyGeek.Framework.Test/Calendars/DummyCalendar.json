@@ -45,6 +45,7 @@
       "precedence": 99
     }
   },
+  "defaultEventRank": "ordinary",
   "seasons": {
     "ordinary": {
       "startDate": "1/1",
@@ -97,6 +98,7 @@
       "dates": [ "1/1" ],
       "eventRankKey": "ordinary",
       "_monthViewContent": true
-    }
+    },
+    { "o": "malachi", "d": "1/3", "f": "highlight" }
   ]
 }

@@ -57,10 +57,11 @@ namespace LiturgyGeek.Framework.Test.Calendars
 
                 VerifySeason(calendar.Seasons["advent"], "11/15", "12/24", false, 0);
 
-                Assert.AreEqual(3, calendar.Events.Count);
+                Assert.AreEqual(4, calendar.Events.Count);
                 VerifyEvent(calendar.Events[0], "pascha", new ChurchDate[] { "1/Sunday" }, null, null, "great.feast", null, null);
                 VerifyEvent(calendar.Events[1], "holy.cross", new ChurchDate[] { "9/14" }, null, null, "great.feast", null, null);
                 VerifyEvent(calendar.Events[2], "basilGreat", new ChurchDate[] { "1/1" }, null, null, "ordinary", null, true);
+                VerifyEvent(calendar.Events[3], "malachi", new ChurchDate[] { "1/3" }, null, null, null, null, null);
             }
         }
 
@@ -154,7 +155,7 @@ namespace LiturgyGeek.Framework.Test.Calendars
             {
                 {
                     "OrthodoxNC",
-                    new ChurchCalendar("Orthodox (New Calendar)", "byzantine", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
+                    new ChurchCalendar("Orthodox (New Calendar)", "byzantine", "ordinary", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
                     {
                         Events = new List<ChurchEvent>
                         {

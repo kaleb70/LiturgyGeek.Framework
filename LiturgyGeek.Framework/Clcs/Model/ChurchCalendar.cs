@@ -29,6 +29,8 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public Dictionary<string, TEventRank> EventRanks { get; set; } = new Dictionary<string, TEventRank>();
 
+        public string DefaultEventRank { get; set; }
+
         public Dictionary<string, TCustomFlagBehavior> CustomFlagBehaviors { get; set; }
             = new Dictionary<string, TCustomFlagBehavior>();
 
@@ -36,18 +38,19 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public List<TEvent> Events { get; set; } = new List<TEvent>();
 
-        public ChurchCalendar(string name, string traditionKey)
+        public ChurchCalendar(string name, string traditionKey, string defaultEventRank)
         {
             Name = name;
             TraditionKey = traditionKey;
+            DefaultEventRank = defaultEventRank;
         }
     }
 
     public class ChurchCalendar : ChurchCalendar<ChurchRule, ChurchRuleGroup, CustomFlagBehavior, ChurchRuleCriteria, ChurchEventRank, ChurchSeason, ChurchEvent>
     {
         [JsonConstructor]
-        public ChurchCalendar(string name, string traditionKey)
-            : base(name, traditionKey)
+        public ChurchCalendar(string name, string traditionKey, string defaultEventRank)
+            : base(name, traditionKey, defaultEventRank)
         {
         }
     }

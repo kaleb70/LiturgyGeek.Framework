@@ -15,9 +15,15 @@ namespace LiturgyGeek.Framework.Calendars
 
         public bool? _MonthViewContent { get; set; }
 
-        [JsonConstructor]
         public ChurchEvent(string? occasionKey, string? name)
             : base(occasionKey, name)
+        {
+        }
+
+        [JsonConstructor]
+        public ChurchEvent(string? occasionKey, string? name, List<ChurchDate>? dates, HashSet<string>? customFlags,
+                            string? _o, ChurchDate? _d, string? _f)
+            : base(occasionKey, name, dates, customFlags, _o, _d, _f)
         {
         }
 
@@ -57,8 +63,9 @@ namespace LiturgyGeek.Framework.Calendars
             if (OccasionKey != null && (Name == null || LongName == null))
                 provider.GetCommon().Occasions.TryGetValue(OccasionKey, out occasion);
 
-            ChurchEventRank? eventRank;
-            if (EventRankKey == null || !calendar.EventRanks.TryGetValue(EventRankKey, out eventRank))
+            EventRankKey ??= calendar.DefaultEventRank;
+
+            if (!calendar.EventRanks.TryGetValue(EventRankKey, out var eventRank))
                 eventRank = null;
 
             if (eventRank != null)

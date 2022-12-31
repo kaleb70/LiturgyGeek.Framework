@@ -13,20 +13,20 @@ namespace LiturgyGeek.Framework.Calendars
     public class ChurchCalendar : Clcs.Model.ChurchCalendar<ChurchRule, ChurchRuleGroup, CustomFlagBehavior, ChurchRuleCriteria, ChurchEventRank, ChurchSeason, ChurchEvent>, ICloneable<ChurchCalendar>
     {
         [JsonConstructor]
-        public ChurchCalendar(string name, string traditionKey)
-            : base(name, traditionKey)
+        public ChurchCalendar(string name, string traditionKey, string defaultEventRank)
+            : base(name, traditionKey, defaultEventRank)
         {
         }
 
-        public ChurchCalendar(string name, string traditionKey, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning)
-            :  base(name, traditionKey)
+        public ChurchCalendar(string name, string traditionKey, string defaultEventRank, CalendarReckoning solarReckoning, CalendarReckoning paschalReckoning)
+            :  base(name, traditionKey, defaultEventRank)
         {
             SolarReckoning = solarReckoning;
             PaschalReckoning = paschalReckoning;
         }
 
         public ChurchCalendar(ChurchCalendar other)
-            : base(other.Name, other.TraditionKey)
+            : base(other.Name, other.TraditionKey, other.DefaultEventRank)
         {
             SolarReckoning = other.SolarReckoning;
             PaschalReckoning = other.PaschalReckoning;
