@@ -21,9 +21,8 @@ namespace LiturgyGeek.Framework.Calendars
         }
 
         [JsonConstructor]
-        public ChurchEvent(string? occasionKey, string? name, List<ChurchDate>? dates, HashSet<string>? customFlags,
-                            string? _o, ChurchDate? _d, string? _f)
-            : base(occasionKey, name, dates, customFlags, _o, _d, _f)
+        public ChurchEvent(string? occasionKey, string? name, List<ChurchDate>? dates, HashSet<string>? customFlags, string? _)
+            : base(occasionKey, name, dates, customFlags, _)
         {
         }
 

@@ -1,4 +1,5 @@
 ﻿using LiturgyGeek.Framework.Clcs.Dates;
+using LiturgyGeek.Framework.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,22 +27,7 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public Dictionary<string, TRuleCriteria[]> RuleCriteria { get; set; } = new Dictionary<string, TRuleCriteria[]>();
 
-        [JsonPropertyName("o")]
-        public string? _o
-        {
-            get => null;
-            set => throw new NotImplementedException();
-        }
-
-        [JsonPropertyName("d")]
-        public ChurchDate? _d
-        {
-            get => null;
-            set => throw new NotImplementedException();
-        }
-
-        [JsonPropertyName("f")]
-        public string? _f
+        public string? _
         {
             get => null;
             set => throw new NotImplementedException();
@@ -57,34 +43,45 @@ namespace LiturgyGeek.Framework.Clcs.Model
         }
 
         [JsonConstructor]
-        public ChurchEvent(string? occasionKey, string? name, List<ChurchDate>? dates, HashSet<string>? customFlags,
-                            string? _o, ChurchDate? _d, string? _f)
+        public ChurchEvent(string? occasionKey, string? name, List<ChurchDate>? dates, HashSet<string>? customFlags, string? _)
         {
-            if (occasionKey == null && _o == null && name == null)
-                throw new JsonException("Either \"occasionKey\" or \"o\" or \"name\" must be provided");
+            if (occasionKey == null && _ == null && name == null)
+                throw new JsonException("Either \"occasionKey\" or \"name\" or \"_\" must be provided");
 
-            if (occasionKey != null && _o != null)
-                throw new JsonException("Conflicting properties \"occasionKey\" and \"o\"");
+            if (occasionKey != null && _ != null)
+                throw new JsonException("Conflicting properties \"occasionKey\" and \"_\"");
 
-            if ((dates != null) == (_d != null))
-                throw new JsonException("Either \"dates\" or \"d\" must be specified, but not both");
+            if ((dates != null) == (_ != null))
+                throw new JsonException("Either \"dates\" or \"_\" must be specified, but not both");
 
-            if (customFlags != null && _f != null)
-                throw new JsonException("Conflicting properties \"customFlags\" and \"f\"");
+            if (customFlags != null && _ != null)
+                throw new JsonException("Conflicting properties \"customFlags\" and \"_\"");
 
-            OccasionKey = occasionKey ?? _o;
-            Name = name;
+            if (_ != null)
+            {
+                var parts = _.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length < 2)
+                    throw new JsonException("_ property must be in the form \"occasionKey date customFlag\" (customFlag is optional)");
 
-            if (dates != null)
-                Dates = dates;
+                OccasionKey = parts[0];
+
+                if (!ChurchDate.TryParse(parts[1], out var date))
+                    throw new JsonException("date part of _ property is invalid");
+                Dates.Add(date);
+
+                CustomFlags.AddRange(parts.Skip(2));
+            }
             else
-                Dates.Add(_d!);
+            {
+                OccasionKey = occasionKey;
 
-            if (customFlags != null)
-                CustomFlags = customFlags;
+                if (dates != null)
+                    Dates = dates;
 
-            if (_f != null)
-                CustomFlags.Add(_f);
+                if (customFlags != null)
+                    CustomFlags = customFlags;
+            }
+            Name = name;
         }
 
         [JsonConstructor]
