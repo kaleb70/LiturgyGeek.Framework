@@ -21,6 +21,8 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public string TraditionKey { get; set; }
 
+        public string CalendarKey { get; set; }
+
         public CalendarReckoning SolarReckoning { get; set; }
 
         public CalendarReckoning PaschalReckoning { get; set; }
@@ -38,10 +40,11 @@ namespace LiturgyGeek.Framework.Clcs.Model
 
         public List<TEvent> Events { get; set; } = new List<TEvent>();
 
-        public ChurchCalendar(string name, string traditionKey, string defaultEventRank)
+        public ChurchCalendar(string name, string traditionKey, string calendarKey, string defaultEventRank)
         {
             Name = name;
             TraditionKey = traditionKey;
+            CalendarKey = calendarKey;
             DefaultEventRank = defaultEventRank;
         }
     }
@@ -49,8 +52,8 @@ namespace LiturgyGeek.Framework.Clcs.Model
     public class ChurchCalendar : ChurchCalendar<ChurchRule, ChurchRuleGroup, CustomFlagBehavior, ChurchRuleCriteria, ChurchEventRank, ChurchSeason, ChurchEvent>
     {
         [JsonConstructor]
-        public ChurchCalendar(string name, string traditionKey, string defaultEventRank)
-            : base(name, traditionKey, defaultEventRank)
+        public ChurchCalendar(string name, string traditionKey, string calendarKey, string defaultEventRank)
+            : base(name, traditionKey, calendarKey, defaultEventRank)
         {
         }
     }

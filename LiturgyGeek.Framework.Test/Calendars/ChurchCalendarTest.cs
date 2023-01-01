@@ -155,7 +155,7 @@ namespace LiturgyGeek.Framework.Test.Calendars
             {
                 {
                     "OrthodoxNC",
-                    new ChurchCalendar("Orthodox (New Calendar)", "byzantine", "ordinary", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
+                    new ChurchCalendar("Orthodox (New Calendar)", "byzantine", "oca", "ordinary", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
                     {
                         Events = new List<ChurchEvent>
                         {

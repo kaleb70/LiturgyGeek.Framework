@@ -25,7 +25,7 @@ namespace LiturgyGeek.Framework.TestApp
             //}
         }
 
-        private static ChurchCalendar OcaCalendar = new ChurchCalendar("OCA", "byzantine", "ordinary", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
+        private static ChurchCalendar OcaCalendar = new ChurchCalendar("OCA", "byzantine", "oca", "ordinary", CalendarReckoning.RevisedJulian, CalendarReckoning.Julian)
         {
             Seasons = new()
             {
