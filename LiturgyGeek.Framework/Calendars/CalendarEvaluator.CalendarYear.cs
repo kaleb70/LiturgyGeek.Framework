@@ -17,25 +17,20 @@ namespace LiturgyGeek.Framework.Calendars
         {
             public int Year { get; init; }
 
-            private readonly List<ChurchEventInstance> eventInstances = new List<ChurchEventInstance>
-            {
-                default(ChurchEventInstance) // placeholder for index 0
-            };
+            private readonly ChurchEventInstance[] fixedEventsByDay;
 
-            private readonly int[] fixedEventsByDay;
-
-            private readonly int[] movableEventsByDay;
+            private readonly ChurchEventInstance[] movableEventsByDay;
 
             private readonly int[] eventCountsByDay;
 
-            private readonly int[][] eventSources;
+            private readonly ChurchEventInstance[][] eventSources;
 
             private readonly List<ChurchSeasonInstance> seasonInstances = new List<ChurchSeasonInstance>
             {
                 default(ChurchSeasonInstance), // placeholder for index 0
             };
 
-            private readonly ChurchSeasonInstance[] seasonsByDay;
+            private readonly int[] seasonsByDay;
 
             private readonly List<DateTime> dateInstances = new List<DateTime>
             {
@@ -55,11 +50,11 @@ namespace LiturgyGeek.Framework.Calendars
                 var firstOfYear = new DateTime(year, 1, 1);
                 int daysInYear = firstOfYear.AddYears(1).Subtract(firstOfYear).Days;
                 eventCountsByDay = new int[daysInYear + 1];
-                eventSources = new int[2][];
-                eventSources[0] = movableEventsByDay = new int[daysInYear + 1];
-                eventSources[1] = fixedEventsByDay = new int[daysInYear + 1];
+                eventSources = new ChurchEventInstance[2][];
+                eventSources[0] = movableEventsByDay = new ChurchEventInstance[daysInYear + 1];
+                eventSources[1] = fixedEventsByDay = new ChurchEventInstance[daysInYear + 1];
 
-                seasonsByDay = new ChurchSeasonInstance[daysInYear + 1];
+                seasonsByDay = new int[daysInYear + 1];
 
                 AddRuleVisibilityInstances(calendarSystem, churchCalendar);
                 AddEventInstances(calendarSystem, churchCalendar);
@@ -95,12 +90,10 @@ namespace LiturgyGeek.Framework.Calendars
                                 if (instanceDate?.Year == Year)
                                 {
                                     var dayOfYear = instanceDate.Value.DayOfYear;
-                                    var newIndex = eventInstances.Count;
 
-                                    ChurchEventInstance eventInstance = new ChurchEventInstance
+                                    ChurchEventInstance eventInstance = new ChurchEventInstance(churchEvent)
                                     {
                                         nextEventInstance = target[dayOfYear],
-                                        churchEvent = churchEvent,
                                     };
 
                                     AddCriteriaInstances(calendarSystem, RuleCriteriaFlags.Event,
@@ -109,8 +102,7 @@ namespace LiturgyGeek.Framework.Calendars
                                                             out eventInstance.ruleCriteriaIndex,
                                                             out eventInstance.ruleCriteriaCount);
 
-                                    eventInstances.Add(eventInstance);
-                                    target[dayOfYear] = newIndex;
+                                    target[dayOfYear] = eventInstance;
                                     ++eventCountsByDay[dayOfYear];
                                 }
                             }
@@ -150,18 +142,19 @@ namespace LiturgyGeek.Framework.Calendars
                     }
 
                     foreach (var seasonInstance in seasonInstances
+                                                    .Select((s, i) => new { s, i })
                                                     .Skip(1)
-                                                    .OrderByDescending(s => s.season.IsDefault)
-                                                    .ThenByDescending(s => s.DaysInSeason))
+                                                    .OrderByDescending(s => s.s.season.IsDefault)
+                                                    .ThenByDescending(s => s.s.DaysInSeason))
                     {
-                        var minDayOfYear = seasonInstance.startDate.Year < Year
+                        var minDayOfYear = seasonInstance.s.startDate.Year < Year
                                             ? 1
-                                            : seasonInstance.startDate.DayOfYear;
-                        var maxDayOfYear = seasonInstance.endDate.Year > Year
+                                            : seasonInstance.s.startDate.DayOfYear;
+                        var maxDayOfYear = seasonInstance.s.endDate.Year > Year
                                             ? seasonsByDay.Length
-                                            : seasonInstance.endDate.DayOfYear + 1;
+                                            : seasonInstance.s.endDate.DayOfYear + 1;
 
-                        Array.Fill(seasonsByDay, seasonInstance, minDayOfYear, maxDayOfYear - minDayOfYear);
+                        Array.Fill(seasonsByDay, seasonInstance.i, minDayOfYear, maxDayOfYear - minDayOfYear);
                     }
                 }
             }
@@ -314,12 +307,11 @@ namespace LiturgyGeek.Framework.Calendars
 
                 foreach (var source in eventSources)
                 {
-                    int instanceIndex = source[date.DayOfYear];
-                    while (instanceIndex != 0)
+                    for (var eventInstance = source[date.DayOfYear];
+                            eventInstance != null;
+                            eventInstance = eventInstance.nextEventInstance)
                     {
-                        var instance = eventInstances[instanceIndex];
-                        result[resultIndex++] = instance;
-                        instanceIndex = instance.nextEventInstance;
+                        result[resultIndex++] = eventInstance;
                     }
                 }
 
@@ -329,7 +321,7 @@ namespace LiturgyGeek.Framework.Calendars
             public ChurchSeasonInstance GetSeasonInstance(DateTime date)
             {
                 return date.Year == Year
-                        ? seasonsByDay[date.DayOfYear]
+                        ? seasonInstances[seasonsByDay[date.DayOfYear]]
                         : throw new ArgumentOutOfRangeException(nameof(date));
             }
 
@@ -401,15 +393,20 @@ namespace LiturgyGeek.Framework.Calendars
                 }
             }
 
-            public struct ChurchEventInstance
+            public class ChurchEventInstance
             {
-                public int nextEventInstance;
+                public ChurchEventInstance? nextEventInstance;
 
                 public int ruleCriteriaIndex;
 
                 public int ruleCriteriaCount;
 
                 public ChurchEvent churchEvent;
+
+                public ChurchEventInstance(ChurchEvent churchEvent)
+                {
+                    this.churchEvent = churchEvent;
+                }
 
                 public IEnumerable<ChurchRuleCriteriaInstance> GetRules
                     (
