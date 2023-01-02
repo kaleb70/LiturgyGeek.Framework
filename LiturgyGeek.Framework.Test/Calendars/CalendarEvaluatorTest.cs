@@ -22,7 +22,35 @@ namespace LiturgyGeek.Framework.Test.Calendars
             Assert.AreEqual(1, result.Count(e => e.Events.Length > 0));
 
             Assert.AreEqual(1, result[17].Events.Length);
-            Assert.IsTrue(result[17].Events[0]._MonthViewContent);
+            Assert.IsTrue(result[17].Events[0].Event._MonthViewContent);
+        }
+
+        [TestMethod]
+        public void TestTransfer()
+        {
+            var provider = new CalendarProvider();
+            var evaluator = new CalendarEvaluator(provider);
+
+
+
+            var result = evaluator.Evaluate("DummyCalendar", new DateTime(2078, 5, 8), new DateTime(2078, 5, 10));
+            Assert.AreEqual(2, result.Length);
+
+            Assert.AreEqual(1, result[0].Events.Length);
+            Assert.AreEqual("pascha", result[0].Events[0].Event.OccasionKey);
+
+            Assert.AreEqual(1, result[1].Events.Length);
+            Assert.AreEqual("john", result[1].Events[0].Event.OccasionKey);
+
+
+
+            result = evaluator.Evaluate("DummyCalendar", new DateTime(2023, 5, 8), new DateTime(2023, 5, 10));
+            Assert.AreEqual(2, result.Length);
+
+            Assert.AreEqual(1, result[0].Events.Length);
+            Assert.AreEqual("john", result[0].Events[0].Event.OccasionKey);
+
+            Assert.AreEqual(0, result[1].Events.Length);
         }
 
         [TestMethod]
@@ -34,7 +62,7 @@ namespace LiturgyGeek.Framework.Test.Calendars
             var result = evaluator.Evaluate("DummyCalendar", new DateTime(2022, 9, 14), new DateTime(2022, 9, 15));
             Assert.AreEqual(1, result.Length);
             Assert.AreEqual(1, result[0].Events.Length);
-            Assert.IsTrue(result[0].Events[0]._MonthViewContent);
+            Assert.IsTrue(result[0].Events[0].Event._MonthViewContent);
 
             Assert.AreEqual(1, result[0].Rules.Length);
             Assert.AreEqual("fast.strict", result[0].Rules[0].Rule.Key);
@@ -51,7 +79,7 @@ namespace LiturgyGeek.Framework.Test.Calendars
             var result = evaluator.Evaluate("DummyCalendar", new DateTime(2022, 1, 1), new DateTime(2022, 1, 2));
             Assert.AreEqual(1, result.Length);
             Assert.AreEqual(1, result[0].Events.Length);
-            Assert.IsTrue(result[0].Events[0]._MonthViewContent);
+            Assert.IsTrue(result[0].Events[0].Event._MonthViewContent);
         }
 
         public class CalendarProvider : IChurchCalendarProvider

@@ -100,7 +100,7 @@ namespace LiturgyGeek.Framework.Calendars
                             })
                             .ToArray();
 
-            ChurchEvent[] events = eventInstances.Select(e => e.churchEvent).ToArray();
+            var events = eventInstances.Select(e => new ChurchEventResult(e.churchEvent, e.transferredFrom)).ToArray();
 
             var result = new CalendarDayResult(d, seasonInstance.season, rules, events);
 

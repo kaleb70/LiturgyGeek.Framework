@@ -17,13 +17,13 @@ namespace LiturgyGeek.Framework.Calendars
         {
             public int Year { get; init; }
 
-            private readonly ChurchEventInstance[] fixedEventsByDay;
+            private readonly ChurchEventInstance?[] fixedEventsByDay;
 
-            private readonly ChurchEventInstance[] movableEventsByDay;
+            private readonly ChurchEventInstance?[] movableEventsByDay;
 
             private readonly int[] eventCountsByDay;
 
-            private readonly ChurchEventInstance[][] eventSources;
+            private readonly ChurchEventInstance?[][] eventSources;
 
             private readonly List<ChurchSeasonInstance> seasonInstances = new List<ChurchSeasonInstance>
             {
@@ -44,6 +44,10 @@ namespace LiturgyGeek.Framework.Calendars
 
             private readonly Dictionary<RuleKey, int> ruleVisibilityInstances = new Dictionary<RuleKey, int>();
 
+            private readonly TransferCriteria[] transferCriteriaByDay;
+
+            private const int maxTransferCriteriaPerDay = 4;
+
             public CalendarYear(int year, ChurchCalendar churchCalendar, ChurchCalendarSystem calendarSystem)
             {
                 Year = year;
@@ -51,14 +55,178 @@ namespace LiturgyGeek.Framework.Calendars
                 int daysInYear = firstOfYear.AddYears(1).Subtract(firstOfYear).Days;
                 eventCountsByDay = new int[daysInYear + 1];
                 eventSources = new ChurchEventInstance[2][];
-                eventSources[0] = movableEventsByDay = new ChurchEventInstance[daysInYear + 1];
-                eventSources[1] = fixedEventsByDay = new ChurchEventInstance[daysInYear + 1];
+                eventSources[0] = movableEventsByDay = new ChurchEventInstance?[daysInYear + 1];
+                eventSources[1] = fixedEventsByDay = new ChurchEventInstance?[daysInYear + 1];
+                transferCriteriaByDay = new TransferCriteria[daysInYear + 1];
 
                 seasonsByDay = new int[daysInYear + 1];
 
                 AddRuleVisibilityInstances(calendarSystem, churchCalendar);
                 AddEventInstances(calendarSystem, churchCalendar);
                 AddSeasonInstances(calendarSystem, churchCalendar);
+
+                TransferEvents(calendarSystem, churchCalendar);
+            }
+
+            private IEnumerable<ChurchRuleCriteriaInstance> GetTransfers(int dayOfYear)
+            {
+                var transferCriteria = transferCriteriaByDay[dayOfYear];
+                for (int offset = 0; offset < transferCriteria.count; offset++)
+                    yield return criteriaInstances[transferCriteria.startIndex + offset];
+            }
+
+            private void TransferEvents(ChurchCalendarSystem calendarSystem, ChurchCalendar churchCalendar)
+            {
+                int transferWindowStart = 0;
+                for (int dayOfYear = 1; dayOfYear < transferCriteriaByDay.Length; dayOfYear++)
+                {
+                    if (GetTransfers(dayOfYear).Any(c => c.criteria.RuleKey == "after"))
+                    {
+                        if (transferWindowStart == 0)
+                            transferWindowStart = dayOfYear;
+                    }
+                    else
+                    {
+                        if (transferWindowStart != 0)
+                        {
+                            while (transferWindowStart < dayOfYear)
+                                transferCriteriaByDay[transferWindowStart++].dayOfYearAfter = dayOfYear;
+                            transferWindowStart = 0;
+                        }
+                    }
+                }
+                transferWindowStart = 0;
+                for (int dayOfYear = transferCriteriaByDay.Length - 1; dayOfYear > 0; dayOfYear--)
+                {
+                    if (GetTransfers(dayOfYear).Any(c => c.criteria.RuleKey == "before"))
+                    {
+                        if (transferWindowStart == 0)
+                            transferWindowStart = dayOfYear;
+                    }
+                    else
+                    {
+                        if (transferWindowStart != 0)
+                        {
+                            while (transferWindowStart > dayOfYear)
+                                transferCriteriaByDay[transferWindowStart--].dayOfYearBefore = dayOfYear;
+                            transferWindowStart = 0;
+                        }
+                    }
+                }
+
+                int targetDayOfYear = 0;
+                for (int dayOfYear = 1; dayOfYear < transferCriteriaByDay.Length; dayOfYear++)
+                {
+                    var date = new DateTime(Year, 1, 1).AddDays(dayOfYear - 1);
+                    var transferCriteria = transferCriteriaByDay[dayOfYear];
+
+                    if (transferCriteria.dayOfYearAfter != 0)
+                    {
+                        targetDayOfYear = dayOfYear + 1;
+                        while (transferCriteriaByDay[targetDayOfYear].dayOfYearAfter != 0)
+                            ++targetDayOfYear;
+
+                        if (ScanAndTransfer(targetDayOfYear, dayOfYear, date, transferCriteria, "after"))
+                            ++targetDayOfYear;
+                    }
+                    else
+                        targetDayOfYear = 0;
+                }
+
+                targetDayOfYear = 0;
+                for (int dayOfYear = transferCriteriaByDay.Length - 1; dayOfYear > 0; dayOfYear--)
+                {
+                    var date = new DateTime(Year, 1, 1).AddDays(dayOfYear - 1);
+                    var transferCriteria = transferCriteriaByDay[dayOfYear];
+
+                    if (transferCriteria.dayOfYearBefore != 0)
+                    {
+                        targetDayOfYear = dayOfYear - 1;
+                        while (transferCriteriaByDay[targetDayOfYear].dayOfYearBefore != 0)
+                            --targetDayOfYear;
+
+                        if (ScanAndTransfer(targetDayOfYear, dayOfYear, date, transferCriteria, "before"))
+                            --targetDayOfYear;
+                    }
+                    else
+                        targetDayOfYear = 0;
+                }
+
+                bool ScanAndTransfer(int targetDayOfYear, int dayOfYear, DateTime date, TransferCriteria transferCriteria, string ruleKey)
+                {
+                    ChurchEventInstance? firstTransfer = null;
+                    ChurchEventInstance? lastTransfer = null;
+                    int transferCount = 0;
+
+                    for (var eventInstance = fixedEventsByDay[dayOfYear];
+                            eventInstance != null;
+                            eventInstance = eventInstance.nextEventInstance)
+                    {
+                        if (MeetsTransferCriteria(date, eventInstance, transferCriteria, ruleKey))
+                        {
+                            RemoveFixedEvent(dayOfYear, eventInstance);
+
+                            if (lastTransfer != null)
+                                lastTransfer.nextEventInstance = eventInstance;
+                            else
+                                firstTransfer = eventInstance;
+
+                            eventInstance.transferredFrom = date;
+                            eventInstance.nextEventInstance = null;
+                            lastTransfer = eventInstance;
+
+                            ++transferCount;
+                        }
+                    }
+
+                    if (lastTransfer != null)
+                    {
+                        lastTransfer.nextEventInstance = fixedEventsByDay[targetDayOfYear];
+                        fixedEventsByDay[targetDayOfYear] = firstTransfer;
+                        eventCountsByDay[targetDayOfYear] += transferCount;
+
+                        return true;
+                    }
+
+                    return false;
+                }
+            }
+
+            private void RemoveFixedEvent(int dayOfYear, ChurchEventInstance eventInstance)
+            {
+                if (fixedEventsByDay[dayOfYear] == eventInstance)
+                {
+                    fixedEventsByDay[dayOfYear] = eventInstance.nextEventInstance;
+                    --eventCountsByDay[dayOfYear];
+                }
+                else
+                {
+                    for (var prevEventInstance = fixedEventsByDay[dayOfYear];
+                            prevEventInstance != null;
+                            prevEventInstance = prevEventInstance.nextEventInstance)
+                    {
+                        if (prevEventInstance.nextEventInstance == eventInstance)
+                        {
+                            prevEventInstance.nextEventInstance = eventInstance.nextEventInstance;
+                            --eventCountsByDay[dayOfYear];
+                        }
+                    }
+                }
+            }
+
+            private bool MeetsTransferCriteria(DateTime date, ChurchEventInstance eventInstance,
+                                                TransferCriteria transferCriteria, string ruleKey)
+            {
+                for (int offset = 0; offset < transferCriteria.count; offset++)
+                {
+                    var criteriaInstance = criteriaInstances[transferCriteria.startIndex + offset];
+                    if (criteriaInstance.criteria.RuleKey == ruleKey
+                        && criteriaInstance.MeetsCriteria(this, date, new[] { eventInstance }))
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
 
             private void AddRuleVisibilityInstances(ChurchCalendarSystem calendarSystem, ChurchCalendar churchCalendar)
@@ -100,7 +268,15 @@ namespace LiturgyGeek.Framework.Calendars
                                                             churchEvent.RuleCriteria, basisYear,
                                                             instanceDate.Value, instanceDate.Value,
                                                             out eventInstance.ruleCriteriaIndex,
-                                                            out eventInstance.ruleCriteriaCount);
+                                                            out eventInstance.ruleCriteriaCount,
+                                                            out var transferCriteriaIndex,
+                                                            out var transferCriteriaCount);
+
+                                    if (date.IsMovable && transferCriteriaIndex != 0)
+                                    {
+                                        transferCriteriaByDay[dayOfYear].startIndex = transferCriteriaIndex;
+                                        transferCriteriaByDay[dayOfYear].count = transferCriteriaCount;
+                                    }
 
                                     target[dayOfYear] = eventInstance;
                                     ++eventCountsByDay[dayOfYear];
@@ -135,7 +311,21 @@ namespace LiturgyGeek.Framework.Calendars
                                                     season.RuleCriteria, basisYear,
                                                     seasonInstance.startDate, seasonInstance.endDate,
                                                     out seasonInstance.ruleCriteriaIndex,
-                                                    out seasonInstance.ruleCriteriaCount);
+                                                    out seasonInstance.ruleCriteriaCount,
+                                                    out var transferCriteriaIndex,
+                                                    out var transferCriteriaCount);
+
+                            if ((season.StartDate.IsMovable || season.EndDate.IsMovable)
+                                && transferCriteriaIndex != 0)
+                            {
+                                for (int dayOfYear = seasonInstance.startDate.DayOfYear;
+                                        dayOfYear <= seasonInstance.endDate.DayOfYear;
+                                        dayOfYear++)
+                                {
+                                    transferCriteriaByDay[dayOfYear].startIndex = transferCriteriaIndex;
+                                    transferCriteriaByDay[dayOfYear].count = transferCriteriaCount;
+                                }
+                            }
 
                             seasonInstances.Add(seasonInstance);
                         }
@@ -166,10 +356,12 @@ namespace LiturgyGeek.Framework.Calendars
                                                 DateTime startDate,
                                                 DateTime endDate,
                                                 out int startIndex,
-                                                out int count)
+                                                out int count,
+                                                out int transferStartIndex,
+                                                out int transferCount)
             {
                 startIndex = criteriaInstances.Count;
-                foreach (var criteriaGroup in criteriaGroups)
+                foreach (var criteriaGroup in criteriaGroups.Where(g => g.Key != "transfer"))
                 {
                     foreach (var criteria in criteriaGroup.Value)
                     {
@@ -181,6 +373,20 @@ namespace LiturgyGeek.Framework.Calendars
                     startIndex = count = 0;
                 else
                     count = criteriaInstances.Count - startIndex;
+
+                transferStartIndex = criteriaInstances.Count;
+                if (criteriaGroups.TryGetValue("transfer", out var transferCriteria))
+                {
+                    foreach (var criteria in transferCriteria)
+                    {
+                        AddCriteriaInstance(calendarSystem, flags, basisYear, startDate, endDate,
+                                            "transfer", criteria);
+                    }
+                }
+                if (criteriaInstances.Count == transferStartIndex)
+                    transferStartIndex = transferCount = 0;
+                else
+                    transferCount = criteriaInstances.Count - transferStartIndex;
             }
 
             private int AddCriteriaInstance(ChurchCalendarSystem calendarSystem,
@@ -393,6 +599,17 @@ namespace LiturgyGeek.Framework.Calendars
                 }
             }
 
+            public struct TransferCriteria
+            {
+                public int startIndex;
+
+                public int count;
+
+                public int dayOfYearBefore;
+
+                public int dayOfYearAfter;
+            }
+
             public class ChurchEventInstance
             {
                 public ChurchEventInstance? nextEventInstance;
@@ -402,6 +619,8 @@ namespace LiturgyGeek.Framework.Calendars
                 public int ruleCriteriaCount;
 
                 public ChurchEvent churchEvent;
+
+                public DateTime? transferredFrom;
 
                 public ChurchEventInstance(ChurchEvent churchEvent)
                 {

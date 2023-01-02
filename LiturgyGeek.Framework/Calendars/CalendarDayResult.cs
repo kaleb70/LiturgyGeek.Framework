@@ -14,9 +14,9 @@ namespace LiturgyGeek.Framework.Calendars
 
         public ChurchRuleResult[] Rules { get; set; }
 
-        public ChurchEvent[] Events { get; set; }
+        public ChurchEventResult[] Events { get; set; }
 
-        public CalendarDayResult(DateTime date, ChurchSeason season, ChurchRuleResult[] rules, ChurchEvent[] events)
+        public CalendarDayResult(DateTime date, ChurchSeason season, ChurchRuleResult[] rules, ChurchEventResult[] events)
         {
             Date = date;
             Season = season;

@@ -74,7 +74,20 @@
     {
       "occasionKey": "pascha",
       "dates": [ "1/Sunday" ],
-      "eventRankKey": "great.feast"
+      "eventRankKey": "great.feast",
+      "ruleCriteria": {
+        "transfer": [
+          {
+            "includeRanks": [ "vigil" ],
+            "ruleKey": "after"
+          }
+        ]
+      }
+    },
+    {
+      "occasionKey": "john",
+      "dates": [ "5/8" ],
+      "eventRankKey": "vigil"
     },
     {
       "occasionKey": "holy.cross",
